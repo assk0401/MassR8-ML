@@ -815,18 +815,37 @@ $(ibidir)/metastore-$(metastore-version): \
 	  echo "" > $@
 	fi
 
+# The Ninja build system (https://ninja-build.org) is also known as simply
+# "Ninja". But other package managers (for example Debian) use
+# "ninja-build" (the old "ninja" name has become obsolete there). Also,
+# their own URL is called "ninja-build". So we use the same convention in
+# Maneage.
+$(ibidir)/ninjabuild-$(ninjabuild-version): $(ibidir)/cmake-$(cmake-version)
+	tarball=ninjabuild-$(ninjabuild-version).tar.lz
+	$(call import-source, $(ninjabuild-url), $(ninjabuild-checksum))
+	cd $(ddir)
+	tar -xf $(tdir)/$$tarball
+	cd ninjabuild-$(ninjabuild-version)
+	cmake -Bbuild-cmake
+	cmake --build build-cmake -j$(numthreads)
+	./build-cmake/ninja_test
+	cp -pv build-cmake/ninja $(ibdir)/
+	cd ..
+	rm -rf ninjabuild-$(ninjabuild-version)
+	echo "Ninja build system $(ninjabuild-version)" > $@
+
 $(ibidir)/openblas-$(openblas-version):
-	tarball=OpenBLAS-$(openblas-version).tar.lz
+	tarball=openblas-$(openblas-version).tar.lz
 	$(call import-source, $(openblas-url), $(openblas-checksum))
 	if [ x$(on_mac_os) = xyes ]; then export CC=clang; fi
 	cd $(ddir)
 	tar -xf $(tdir)/$$tarball
-	cd OpenBLAS-$(openblas-version)
+	cd openblas-$(openblas-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	make -j$(numthreads)
 	make PREFIX=$(idir) install
 	cd ..
-	rm -rf OpenBLAS-$(openblas-version)
+	rm -rf openblas-$(openblas-version)
 	echo "OpenBLAS $(openblas-version)" > $@
 
 $(ibidir)/openmpi-$(openmpi-version):

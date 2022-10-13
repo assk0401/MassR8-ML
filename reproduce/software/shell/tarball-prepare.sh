@@ -176,6 +176,10 @@ for f in $allfiles; do
     name=$(echo $(basename $f) \
 	       | sed -e 's/.tar.*//' -e's/_/-/')
 
+    # Extract the software's name from the tarball name (needed later
+    # for software-specific checks).
+    sname=$(echo $name | sed -e's|-| |' | awk '{print $1}')
+
     # Lzip will not be available to unpack Lzip itself, so just use Tar.
     if [[ $name =~ ^lzip ]]; then
       outname=$name.tar
@@ -204,8 +208,9 @@ for f in $allfiles; do
     # Create a temporary directory name
     tmpdir=$odir/$name-tmpunpack
 
-    # If the temporary directory exists, mkdir will throw an error. The
-    # developer needs to intervene manually to fix the issue.
+    # If the temporary directory exists, delete it and build an empty
+    # directory to work on (to avoid potential conflicts).
+    if [ -d $tmpdir ]; then rm -rf $tmpdir; fi
     mkdir $tmpdir
 
 
@@ -235,8 +240,15 @@ for f in $allfiles; do
     # for large tarballs such as gcc's)
     find "$name"/ -type f -print0 | xargs -0 touch
 
+    # Some software source files (like Boost; https://www.boost.io)
+    # have names that are too long for the more robust 'ustar'
+    # format. So for we should use 'pax' for them.
+    if [ $sname = boost ]; then tarformat=pax
+    else                        tarformat=ustar
+    fi
+
     # Pack with recommended options
-    tar -c -Hustar --owner=root --group=root \
+    tar -c -H$tarformat --owner=root --group=root \
         -f $name.tar $name/
 
     # Lzip will not be available when unpacking Lzip, so we just use Tar.

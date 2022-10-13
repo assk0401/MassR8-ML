@@ -884,14 +884,17 @@ The project's "source" (this directory) and "build" directories are treated
 separately. This greatly helps in managing the many intermediate files that
 are created during the build. The intermediate build files don't need to be
 archived or backed up: you can always re-build them with the contents of
-the source directory. The build directory also needs a relatively large
-amount of free space (atleast serveral Giga-bytes), while the source
-directory (all plain text) will usually be a mega-byte or less.
+the source directory. The build directory also needs a fairly large amount
+of free space (at least several gigabytes), while the source directory (all
+plain text, ignoring the .git directory if you have it) will usually be a
+megabyte or less.
 
-'.build' (a symbolic link to the build directory) will also be created
+The link '.build' (a symbolic link to the build directory) will be created
 during this configuration. It can help encourage you to set the actual
-build directory in a very different address from this one (one that can be
-deleted and has large volume), while having easy access to it from here.
+build directory to a very different path to that of the source (the build
+directory should be considered as a large volume directory of throwaway
+space that can be casually deleted), while making it easy to access from
+here without having to remember the particular path.
 
 --- CAUTION ---
 Do not choose any directory under the top source directory (this
@@ -905,12 +908,15 @@ EOF
     do
         # Ask the user (if not already set on the command-line).
         if [ x"$build_dir" = x ]; then
-            if read -p"Please enter the top build directory: " build_dir; then
+            if read -p"Please enter the top build directory: " build_dir;
+            then
                 just_a_place_holder_to_avoid_not_equal_test=1;
             else
-                echo "ERROR: shell is in non-interactive-mode and no build directory specified."
-                echo "The build directory (described above) is mandatory, configuration can't continue."
-                echo "Please use '--build-dir' to specify a build directory non-interactively."
+                printf "ERROR: shell is in non-interactive-mode and no "
+                printf "build directory specified. The build directory "
+                printf "(described above) is mandatory, configuration "
+                printf "can't continue. Please use '--build-dir' to "
+                printf "specify a build directory non-interactively"
                 exit 1
             fi
         fi
@@ -937,7 +943,7 @@ EOF
         # directory.
         if ! [ x"$bdir" = x ]; then
             if echo "$bdir/" \
-                    | grep '^'"$currentdir" 2> /dev/null > /dev/null; then
+                    | grep '^'"$currentdir/" 2> /dev/null > /dev/null; then
 
                 # If it was newly created, it will be empty, so delete it.
                 if ! [ "$(ls -A $bdir)" ]; then rm --dir "$bdir"; fi

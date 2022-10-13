@@ -461,6 +461,9 @@ $(ibidir)/ncurses-$(ncurses-version): $(ibidir)/patchelf-$(patchelf-version)
 #
 #	  5. A link is made to also be able to include files from the
 #            'ncurses' headers.
+#
+#	  6. Top-level symbolic links are made for the 'include' (.h) files.
+#
 	if [ x$(on_mac_os) = xyes ]; then so="dylib"; else so="so"; fi
 	if [ -f $(ildir)/libncursesw.$$so ]; then
 
@@ -485,6 +488,11 @@ $(ibidir)/ncurses-$(ncurses-version): $(ibidir)/patchelf-$(patchelf-version)
 	  ln -fs $(ildir)/pkgconfig/ncursesw.pc pkgconfig/cursesw.pc
 
 	  ln -fs $(idir)/include/ncursesw $(idir)/include/ncurses
+
+#	  Add symbolic links for the ncursesw/*.h 'include' files
+#	  so that they can be found in the top-level include/ directory.
+	  cd "$(iidir)"
+	  ln -fsv $(idir)/include/ncursesw/*.h .
 	  echo "GNU NCURSES $(ncurses-version)" > $@
 	else
 	  exit 1
