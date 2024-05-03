@@ -21,9 +21,9 @@
 #
 # ------------------------------------------------------------------------
 #
-# Copyright (C) 2018-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
-# Copyright (C) 2019-2023 Raul Infante-Sainz <infantesainz@gmail.com>
-# Copyright (C) 2022-2023 Pedram Ashofteh Ardakani <pedramardakani@pm.me>
+# Copyright (C) 2018-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2019-2025 Raul Infante-Sainz <infantesainz@gmail.com>
+# Copyright (C) 2022-2025 Pedram Ashofteh Ardakani <pedramardakani@pm.me>
 #
 # This Makefile is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,14 +49,15 @@ include reproduce/software/config/checksums.conf
 include reproduce/software/config/urls.conf
 
 # Basic directories
-lockdir = $(BDIR)/software/locks
-tdir    = $(BDIR)/software/tarballs
-ddir    = $(BDIR)/software/build-tmp
-idir    = $(BDIR)/software/installed
-ibdir   = $(BDIR)/software/installed/bin
-ildir   = $(BDIR)/software/installed/lib
-iidir   = $(BDIR)/software/installed/include
-ibidir  = $(BDIR)/software/installed/version-info/proglib
+lockdir  = $(BDIR)/software/locks
+tdir     = $(BDIR)/software/tarballs
+ddir     = $(BDIR)/software/build-tmp
+idir     = $(BDIR)/software/installed
+ibdir    = $(BDIR)/software/installed/bin
+ildir    = $(BDIR)/software/installed/lib
+iidir    = $(BDIR)/software/installed/include
+shsrcdir = "$(shell pwd)"/reproduce/software/shell
+ibidir   = $(BDIR)/software/installed/version-info/proglib
 
 # Ultimate Makefile target. GNU Nano (a simple and very light-weight text
 # editor) is installed by default, it is recommended to have it in the
@@ -107,6 +108,15 @@ export CPPFLAGS := -I$(idir)/include $(CPPFLAGS) $(noccwarnings)
 # 'LD_LIBRARY_PATH', then we'll add our own newly installed libraries.  We
 # will also make sure that there is no "current directory" in it (by
 # removing a starting or trailing ':' and any occurance of '::'.
+#
+# But first: in case LD_LIBRARY_PATH is empty, give it the default value of
+# $(sys_library_sh_path) (which was the location of the libraries needed by
+# the host's shell). This is because after we add the Maneage's library
+# path, on some systems, no other libraries will be checked except those
+# that are in 'LD_LIBRARY_PATH'.
+ifeq ($(strip $(LD_LIBRARY_PATH)),)
+export LD_LIBRARY_PATH=$(sys_library_sh_path)
+endif
 export LD_LIBRARY_PATH := $(shell echo $(LD_LIBRARY_PATH):$(ildir) \
                                   | sed -e's/::/:/g' -e's/^://' -e's/:$$//')
 
@@ -127,7 +137,7 @@ export DYLD_LIBRARY_PATH :=
 # Afer putting everything together, we use the first server as the
 # reference for all software if their '-url' variable isn't defined (in
 # 'reproduce/software/config/urls.conf').
-downloadwrapper = ./reproduce/analysis/bash/download-multi-try
+downloadwrapper = ./reproduce/analysis/bash/download-multi-try.sh
 maneage_backup_urls := $(shell awk '!/^#/{printf "%s ", $$1}' \
                                reproduce/software/config/servers-backup.conf)
 backupservers_all = $(user_backup_urls) $(maneage_backup_urls)
@@ -336,6 +346,7 @@ $(ibidir)/bzip2-$(bzip2-version): $(ibidir)/gzip-$(gzip-version)
 	rm -rf $$tdir
 	tar -xf $(tdir)/$$tarball
 	cd $$tdir
+	$(shsrcdir)/prep-source.sh $(ibdir)
 	sed -e 's@\(ln -s -f \)$$(PREFIX)/bin/@\1@' Makefile \
 	    > Makefile.sed
 	mv Makefile.sed Makefile
@@ -634,6 +645,7 @@ $(ibidir)/perl-$(perl-version): $(ibidir)/patchelf-$(patchelf-version)
 	rm -rf perl-$(perl-version)
 	tar -xf $(tdir)/$$tarball
 	cd perl-$(perl-version)
+	$(shsrcdir)/prep-source.sh $(ibdir)
 	./Configure -des \
 	            -Dusethreads \
 	            -Duseshrplib \
@@ -691,21 +703,16 @@ $(ibidir)/coreutils-$(coreutils-version): \
                     $(ibidir)/perl-$(perl-version) \
                     $(ibidir)/openssl-$(openssl-version)
 
-#	Import, unpack and enter the source directory.
+#	Import the source tarball.
 	tarball=coreutils-$(coreutils-version).tar.lz
 	$(call import-source, $(coreutils-url), $(coreutils-checksum))
+
+#	Unpack and enter the source.
 	cd $(ddir)
 	rm -rf coreutils-$(coreutils-version)
 	tar -xf $(tdir)/$$tarball
 	cd coreutils-$(coreutils-version)
-
-#	Set the configure script to use our shell, note that we can't
-#	assume GNU SED here yet (it installs after Coreutils).
-	sed -e's|\#\! /bin/sh|\#\! $(ibdir)/bash|' \
-	    -e's|\#\!/bin/sh|\#\! $(ibdir)/bash|' \
-	    configure > configure-tmp
-	mv configure-tmp configure
-	chmod +x configure
+	$(shsrcdir)/prep-source.sh $(ibdir)
 
 #	Configure, build and install Coreutils.
 	./configure --prefix=$(idir) SHELL=$(ibdir)/bash  \
@@ -744,6 +751,7 @@ $(ibidir)/podlators-$(podlators-version): $(ibidir)/perl-$(perl-version)
 	rm -rf podlators-$(podlators-version)
 	tar -xf $(tdir)/$$tarball
 	cd podlators-$(podlators-version)
+	$(shsrcdir)/prep-source.sh $(ibdir)
 	perl Makefile.PL
 	make
 	make install
@@ -1030,7 +1038,7 @@ $(ibidir)/gmp-$(gmp-version): \
 	$(call import-source, $(gmp-url), $(gmp-checksum))
 	$(call gbuild, gmp-$(gmp-version), static, \
 	               --enable-cxx --enable-fat, \
-	               -j$(numthreads) ,make check)
+	               -j$(numthreads))
 	echo "GNU Multiple Precision Arithmetic Library $(gmp-version)" > $@
 
 # Less is useful with Git (to view the diffs within a minimal container)
@@ -1070,16 +1078,27 @@ $(ibidir)/libtool-$(libtool-version): $(ibidir)/m4-$(m4-version)
 $(ibidir)/grep-$(grep-version): $(ibidir)/coreutils-$(coreutils-version)
 	tarball=grep-$(grep-version).tar.lz
 	$(call import-source, $(grep-url), $(grep-checksum))
-	$(call gbuild, grep-$(grep-version), static,,V=1)
+	$(call gbuild, grep-$(grep-version), static,, \
+	               -j$(numthreads) V=1)
 	echo "GNU Grep $(grep-version)" > $@
 
 # M4 doesn't depend on PatchELF, but just to be consistent with the
 # levels/phases introduced here (where the compressors are level 1,
 # PatchELF is level 2, and ...), we'll set it as a dependency.
+#
+# The '--with-syscmd-shell' is used as the default shell and if not given,
+# 'm4' will use '/bin/sh' (which is not under Maneage control and can cause
+# problems in 'high-level.mk' because it closes off the system's
+# LD_LIBRARY_PATH and if the system's '/bin/sh' needs a special system
+# library, the high-level programs will not be built). We are setting this
+# default shell to Dash because M4 is built before our own Bash. Recall
+# that Dash is built before we enter this Makefile.
 $(ibidir)/m4-$(m4-version): $(ibidir)/patchelf-$(patchelf-version)
 	tarball=m4-$(m4-version).tar.lz
 	$(call import-source, $(m4-url), $(m4-checksum))
-	$(call gbuild, m4-$(m4-version), static,,V=1)
+	$(call gbuild, m4-$(m4-version), static, \
+	               --with-syscmd-shell=$(ibdir)/dash, \
+	               -j$(numthreads) V=1)
 	echo "GNU M4 $(m4-version)" > $@
 
 $(ibidir)/mpfr-$(mpfr-version): $(ibidir)/gmp-$(gmp-version)
@@ -1169,7 +1188,7 @@ $(ibidir)/mpc-$(mpc-version): $(ibidir)/mpfr-$(mpfr-version)
 	  echo "" > $@
 	else
 	  $(call gbuild, mpc-$(mpc-version), static, , \
-	                 -j$(numthreads), make check)
+	                 -j$(numthreads))
 	  echo "GNU Multiple Precision Complex library" > $@
 	fi
 
@@ -1399,6 +1418,7 @@ $(ibidir)/gcc-$(gcc-version): $(ibidir)/binutils-$(binutils-version)
 	    ln -s $$odir/gcc-$(gcc-version) $(ddir)/gcc-$(gcc-version)
 	  fi
 	  cd gcc-$(gcc-version)
+	  $(shsrcdir)/prep-source.sh $(ibdir)
 
 #	  Unfortunately binutils installs headers like 'ansidecl.h' that
 #	  have been seen to conflict with GCC's internal versions of those
@@ -1506,7 +1526,18 @@ $(ibidir)/gcc-$(gcc-version): $(ibidir)/binutils-$(binutils-version)
 
 
 
-# Software that need re-compilation (to use our own libraries)
+# Level 6: need re-compilation
+# ----------------------------
+#
+# The initial build of these was done with the host's settings, which will
+# cause problems later when we completely close-off the host environment.
+$(ibidir)/make-$(make-version): $(ibidir)/gcc-$(gcc-version)
+	tarball=make-$(make-version).tar.lz
+	$(call import-source, $(make-url), $(make-checksum))
+	$(call gbuild, make-$(make-version), static, \
+	               --disable-dependency-tracking --without-guile)
+	echo "GNU Make $(make-version)" > $@
+
 $(ibidir)/lzip-$(lzip-version): $(ibidir)/gcc-$(gcc-version)
 	tarball=lzip-$(lzip-version).tar
 	unpackdir=lzip-$(lzip-version)
@@ -1514,6 +1545,7 @@ $(ibidir)/lzip-$(lzip-version): $(ibidir)/gcc-$(gcc-version)
 	rm -rf $$unpackdir
 	tar -xf $(tdir)/$$tarball
 	cd $$unpackdir
+	$(shsrcdir)/prep-source.sh $(ibdir)
 	./configure --build --check --installdir="$(ibdir)"
 	if [ -f $(ibdir)/patchelf ]; then
 	  $(ibdir)/patchelf --set-rpath $(ildir) $(ibdir)/lzip;
@@ -1526,11 +1558,7 @@ $(ibidir)/lzip-$(lzip-version): $(ibidir)/gcc-$(gcc-version)
 
 
 
-
-
-
-
-# Level 6: Basic text editor
+# Level 7: Basic text editor
 # --------------------------
 #
 # If the project is built in a minimal environment, there is no text
@@ -1547,7 +1575,8 @@ $(ibidir)/lzip-$(lzip-version): $(ibidir)/gcc-$(gcc-version)
 # nano (and use their own optional high-level text editor). To do this, you
 # can just have to manually remove 'nano' from 'targets-proglib' above and
 # add their optional text editor in 'TARGETS.conf'.
-$(ibidir)/nano-$(nano-version): $(ibidir)/lzip-$(lzip-version)
+$(ibidir)/nano-$(nano-version): $(ibidir)/lzip-$(lzip-version) \
+                                $(ibidir)/make-$(make-version)
 	tarball=nano-$(nano-version).tar.lz
 	$(call import-source, $(nano-url), $(nano-checksum))
 	$(call gbuild, nano-$(nano-version), static)

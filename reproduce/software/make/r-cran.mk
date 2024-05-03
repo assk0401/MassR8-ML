@@ -12,8 +12,8 @@
 #
 # ------------------------------------------------------------------------
 #
-# Copyright (C) 2022-2023 Boud Roukema <boud@cosmo.torun.pl>
-# Copyright (C) 2022-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2022-2025 Boud Roukema <boud@cosmo.torun.pl>
+# Copyright (C) 2022-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This Makefile is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -204,6 +204,7 @@ $(ibidir)/r-cran-$(r-cran-version): \
 	tar -xf $(tdir)/$$tarball
 	unpackdir=R-$(r-cran-version)
 	cd $$unpackdir
+	$(shsrcdir)/prep-source.sh $(ibdir)
 
 #	We need to manually remove the lines with '~autodetect~', they
 #	cause the configure script to crash in version 4.0.2. They are used

@@ -1,6 +1,6 @@
 # Project initialization.
 #
-# Copyright (C) 2018-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2018-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This Makefile is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -469,7 +469,7 @@ dist-software:
 # process with a file and make sure that only one downloading event is in
 # progress at every moment.
 $(indir):; mkdir $@
-downloadwrapper = $(bashdir)/download-multi-try
+downloadwrapper = $(bashdir)/download-multi-try.sh
 inputdatasets := $(foreach i, \
                    $(patsubst INPUT-%-sha256,%, \
                      $(filter INPUT-%-sha256,$(.VARIABLES))) \
@@ -672,7 +672,7 @@ print-general-metadata = \
 # for the final PDF. Since these are not version controlled, it must be
 # calculated everytime the project is run. So even though this file
 # actually exists, it is also aded as a '.PHONY' target above.
-$(mtexdir)/initialize.tex: | $(mtexdir)
+$(mtexdir)/initialize.tex:
 
 #	Version and title of project. About the starting '@': since these
 #	commands are run every time with './project make', it is annoying

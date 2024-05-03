@@ -1,14 +1,19 @@
-#!/bin/sh
+#!/usr/bin/env sh
 #
 # Attempt downloading multiple times before crashing whole project. From
 # the top project directory (for the shebang above), this script must be
 # run like this:
 #
-#   $ /path/to/download-multi-try downloader lockfile input-url downloaded-name
+#   $ $SHELL /path/to/download-multi-try.sh downloader lockfile \
+#                                           input-url downloaded-name
 #
-# NOTE: The 'downloader' must contain the option to specify the output name
-# in its end. For example "wget -O". Any other option can also be placed in
-# the middle.
+# NOTE:
+# - This script doesn't have a Shebang because in different stages it
+#   should be built with different shells ('/bin/sh' before Maneage
+#   installs its own shell and afterwards with Maneage's own shell).
+# - The 'downloader' must contain the option to specify the output name
+#   in its end. For example "wget -O". Any other option can also be placed in
+#   the middle.
 #
 # Due to temporary network problems, a download may fail suddenly, but
 # succeed in a second try a few seconds later. Without this script that
@@ -26,7 +31,7 @@
 # reason, you don't want to use a lock file, set the 'lockfile' name to
 # 'nolock'.
 #
-# Copyright (C) 2019-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2019-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

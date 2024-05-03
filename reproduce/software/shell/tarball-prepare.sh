@@ -15,8 +15,8 @@
 #
 # Discussion: https://savannah.nongnu.org/task/?15699
 #
-# Copyright (C) 2022-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
-# Copyright (C) 2022-2023 Pedram Ashofteh Ardakani <pedramardakani@pm.me>
+# Copyright (C) 2022-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2022-2025 Pedram Ashofteh Ardakani <pedramardakani@pm.me>
 # Released under GNU GPLv3+
 
 # Abort the script in case of an error.

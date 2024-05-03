@@ -3,8 +3,8 @@
 # High-level script to manage the project.
 # Run './project --help' for a description of how to use it.
 #
-# Copyright (C) 2019-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
-# Copyright (C) 2021-2023 Raul Infante-Sainz <infantesainz@gmail.com>
+# Copyright (C) 2019-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2021-2025 Raul Infante-Sainz <infantesainz@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ host_cc=0
 operation=
 build_dir=
 input_dir=
+keep_going=
 check_config=
 make_targets=
 software_dir=
@@ -118,6 +119,7 @@ Configure options:
 Configure and Make options:
   -d, --debug[=FLAGS]      In configure: use -j1, no -k, and no Zenodo check.
                            In make: 'FLAGS' will be directly passed to 'make'.
+  -k, --keep-going         Keep going when some targets can't be made.
   -g, --group=STR          Build and run with write permissions for a group.
   -j, --jobs=INT           Number of threads to build/run the software.
   -?, --help               Print this help list.
@@ -127,6 +129,7 @@ Make (analysis) options:
 
 Make (final PDF) options:
       --refresh-bib        Force refresh the bibliography.
+      --highlight-all      Activate '--highlight-new' & '--highlight-notes'.
       --highlight-new      Highlight '\new' parts of text as green.
       --highlight-notes    Show '\tonote' regions as red text in PDF.
 
@@ -201,15 +204,20 @@ do
   -j|--jobs)              jobs="$2";                             check_v jobs  "$jobs";    shift;shift;;
   -j=*|--jobs=*)          jobs="${1#*=}";                        check_v jobs  "$jobs";    shift;;
   -j*)                    jobs=$(echo "$1" | sed -e's/-j//');    check_v jobs  "$jobs";    shift;;
+  -k|--keep-going)        keep_going="--keep-going";                                       shift;;
+  -k=*|--keep-going=*)    on_off_option_error --keep-going -k;;
+  -k*)                    on_off_option_error --keep-going -k;;
   -'?'|--help)            print_help; exit 0;;
   -'?'*|--help=*)         on_off_option_error --help -?;;
 
-  # Make options
-  # ------------
-  #
-  # Note that Make's 'debug' can take values, but when called without any
-  # value, it is like giving it a value of 'a'):
+  # Make options (analysis):
+  -p|--prepare-redo)      prepare_redo=1;                                                  shift;;
+  -p=*|--prepare-redo=*)  on_off_option_error --prepare-redo;                              shift;;
+
+  # Make options (final PDF):
   --refresh-bib)          [ -f tex/src/references.tex ] && touch tex/src/references.tex;   shift;;
+  --highlight-all)        highlightnew=1; highlightnotes=1;                                shift;;
+  --highlight-all=*)      on_off_option_error --highlight-new;;
   --highlight-new)        highlightnew=1;                                                  shift;;
   --highlight-new=*)      on_off_option_error --highlight-new;;
   --highlight-notes)      highlightnotes=1;                                                shift;;
@@ -218,15 +226,14 @@ do
                               echo "Please set the operation before calling '--debug'"; exit 1
                           elif [ x$operation = xconfigure ]; then debug=a;   shift;
                           elif [ x$operation = xmake ]; then
-                              if [ x"$2" = x ]; then echo "In make-mode, '--debug' needs a value"; exit 1
+                              if [ x"$2" = x ]; then
+                                  echo "In make-mode, '--debug' needs a value; see GNU Make manual"; exit 1
                               else debug="$2"; check_v debug "$debug"; shift;shift; fi
                           else
                               echo "Operation '$operation' not recognized, please use 'configure' or 'make'"
                           fi;;
   -d=*|--debug=*)         debug="${1#*=}";                       check_v debug "$debug";   shift;;
   -d*)                    debug=$(echo "$1" | sed -e's/-d//');   check_v debug "$debug";   shift;;
-  -p|--prepare-redo)      prepare_redo=1;                                                  shift;;
-  -p=*|--prepare-redo=*)  on_off_option_error --prepare-redo;                              shift;;
 
   # Unrecognized option:
   -*) echo "$scriptname: unknown option '$1'"; exit 1;;
@@ -390,6 +397,7 @@ controlled_env() {
     envmake="$envmake highlightnew=$highlightnew"
     envmake="$envmake highlightnotes=$highlightnotes .local/bin/make"
     envmake="$envmake --no-builtin-rules --no-builtin-variables -f $1"
+    envmake="$envmake $keep_going"
     if ! [ x"$debug" = x  ]; then envmake="$envmake --debug=$debug"; fi
 
     # Set the number of jobs. Note that for the 'configure.sh' script the

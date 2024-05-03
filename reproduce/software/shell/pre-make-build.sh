@@ -2,7 +2,7 @@
 #
 # Very basic tools necessary to start Maneage's default building.
 #
-# Copyright (C) 2020-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2020-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This script is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ instdir="$sdir"/installed
 tmpblddir="$sdir"/build-tmp
 confdir=reproduce/software/config
 ibidir="$instdir"/version-info/proglib
-downloadwrapper=reproduce/analysis/bash/download-multi-try
+downloadwrapper=reproduce/analysis/bash/download-multi-try.sh
 
 # Derived directories
 bindir="$instdir"/bin
@@ -123,7 +123,8 @@ download_tarball() {
     # Make sure this is the correct tarball.
     if type sha512sum > /dev/null 2> /dev/null; then
       checksum=$(sha512sum "$ucname" | awk '{print $1}')
-      expectedchecksum=$(awk '/^'$progname'-checksum/{print $3}' "$checksumsfile")
+      expectedchecksum=$(awk '/^'$progname'-checksum/{print $3}' \
+                             "$checksumsfile")
       if [ x$checksum = x$expectedchecksum ]; then mv "$ucname" "$maneagetar"
       else
         echo "ERROR: Non-matching checksum: $tarball"
@@ -135,8 +136,10 @@ download_tarball() {
     fi
   fi
 
-  # If the tarball is newer than the (possibly existing) program (the version
-  # has changed), then delete the program.
+  # If the tarball is newer than the (possibly existing) program (the
+  # version has changed), then delete the program. When the LaTeX name is
+  # not given here, the software is re-built later (close to the end of
+  # 'basic.mk') and the name is properly placed there.
   if [ -f "$ibidir/$progname" ]; then
       if [ "$maneagetar" -nt "$ibidir/$progname" ]; then
           rm "$ibidir/$progname"
@@ -210,10 +213,15 @@ build_program() {
         fi
     fi
 
-    # Clean up the source directory
+    # Clean up the source directory and write the LaTeX name of the
+    # software (if necessary: otherwise, just make an empty file).
     cd "$topdir"
     rm -rf "$tmpblddir/$unpackdir"
-    echo "$progname_tex $version" > "$ibidir/$progname"
+    if [ x"$progname_tex" = x ]; then
+        echo "" > "$ibidir/$progname"
+    else
+        echo "$progname_tex $version" > "$ibidir/$progname"
+    fi
   fi
 }
 
@@ -256,7 +264,7 @@ build_program
 # Make that has a different executable name (using the '--program-prefix='
 # configure option) from the "default" make (which is this one!).
 progname="make"
-progname_tex="GNU Make"
+progname_tex="" # Make re-built after GCC (empty string to avoid repetition)
 url=$(awk '/^'$progname'-url/{print $3}' $urlfile)
 version=$(awk '/^'$progname'-version/{print $3}' $versionsfile)
 tarball=$progname-$version.tar.lz

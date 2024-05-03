@@ -2,9 +2,9 @@
 #
 # Necessary preparations/configurations for the reproducible project.
 #
-# Copyright (C) 2018-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
-# Copyright (C) 2021-2023 Raul Infante-Sainz <infantesainz@gmail.com>
-# Copyright (C) 2022-2023 Pedram Ashofteh Ardakani <pedramardakani@pm.me>
+# Copyright (C) 2018-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2021-2025 Raul Infante-Sainz <infantesainz@gmail.com>
+# Copyright (C) 2022-2025 Pedram Ashofteh Ardakani <pedramardakani@pm.me>
 #
 # This script is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1252,6 +1252,14 @@ instlibdir="$instdir"/lib
 if ! [ -d "$instlibdir" ]; then mkdir "$instlibdir"; fi
 ln -fs "$instlibdir" "$instdir"/lib64
 
+# Wrapper over Make as a single command so it does not default to '/bin/sh'
+# during installation (needed by some programs like CMake).
+instbindir=$instdir/bin
+if ! [ -d $instbindir ]; then mkdir $instbindir; fi
+makewshell="$instbindir/make-with-shell"
+echo "$instbindir/make SHELL=$instbindir/bash \$@" > $makewshell
+chmod +x $makewshell
+
 
 
 
@@ -1558,6 +1566,35 @@ fi
 
 
 
+# Libraries necessary for the system's shell
+# ------------------------------------------
+#
+# In some cases (mostly the programs that Maneage doesn't yet build by
+# itself), the programs may call the system's shell, not Maneage's
+# shell. After we close-off the system environment from Maneage, this will
+# cause a crash! To avoid such cases, we need to find the locations of the
+# libraries that the shell needs and temporarily add them to the library
+# search path.
+if [ x"$$on_mac_os" != xyes ]; then
+    sys_library_sh_path=$(otool -L /bin/sh \
+                              | awk '/\/lib/{print $1}' \
+                              | sed 's#/[^/]*$##' \
+                              | sort \
+                              | uniq \
+                              | awk '{printf "%s:", $1}END{printf "\b"}')
+else
+    sys_library_sh_path=$(ldd /bin/sh \
+                              | awk '{if($3!="") print $3}' \
+                              | sed 's#/[^/]*$##' \
+                              | sort \
+                              | uniq \
+                              | awk '{printf "%s:", $1}END{printf "\b"}')
+fi
+
+
+
+
+
 # Find Zenodo URL for software downloading
 # ----------------------------------------
 #
@@ -1646,6 +1683,7 @@ fi
 # tools, but we have to be very portable (and use minimal features in all).
 echo; echo "Building necessary software (if necessary)..."
 .local/bin/make $keepgoing -f reproduce/software/make/basic.mk \
+     sys_library_sh_path=$sys_library_sh_path \
      user_backup_urls="$user_backup_urls" \
      sys_library_path=$sys_library_path \
      rpath_command=$rpath_command \
@@ -1673,17 +1711,29 @@ else
     numthreads=$jobs
 fi
 .local/bin/env -i HOME=$bdir \
-     .local/bin/make $keepgoing -f reproduce/software/make/high-level.mk \
-          user_backup_urls="$user_backup_urls" \
-          sys_library_path=$sys_library_path \
-          rpath_command=$rpath_command \
-          all_highlevel=$all_highlevel \
-          static_build=$static_build \
-          numthreads=$numthreads \
-          on_mac_os=$on_mac_os \
-          sys_cpath=$sys_cpath \
-          host_cc=$host_cc \
-          -j$numthreads
+               .local/bin/make $keepgoing \
+               -f reproduce/software/make/high-level.mk \
+               sys_library_sh_path=$sys_library_sh_path \
+               user_backup_urls="$user_backup_urls" \
+               sys_library_path=$sys_library_path \
+               rpath_command=$rpath_command \
+               all_highlevel=$all_highlevel \
+               static_build=$static_build \
+               numthreads=$numthreads \
+               on_mac_os=$on_mac_os \
+               sys_cpath=$sys_cpath \
+               host_cc=$host_cc \
+               -j$numthreads
+
+
+
+
+
+# Delete the temporary Make wrapper
+# ---------------------------------
+#
+# See above for its description.
+rm $makewshell
 
 
 

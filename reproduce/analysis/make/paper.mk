@@ -1,6 +1,6 @@
 # Build the final PDF paper/report.
 #
-# Copyright (C) 2018-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2018-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This Makefile is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -128,6 +128,11 @@ $(texbdir)/paper.bbl: tex/src/references.tex $(mtexdir)/dependencies-bib.tex \
 #	  use PGFPlots, then you should remove the '-shell-escape' option
 #	  for better security. See https://savannah.nongnu.org/task/?15694
 #	  for details.
+#
+#	  We need the modification to 'LD_LIBRARY_PATH' because we do not
+#	  build LaTeX from source and it uses '/bin/sh' (among other
+#	  possible system-wide things).
+	  export LD_LIBRARY_PATH="$(sys_library_sh_path):$$LD_LIBRARY_PATH"
 	  pdflatex -shell-escape -halt-on-error "$$p"/paper.tex
 	  biber paper
 
@@ -158,6 +163,11 @@ paper.pdf: $(mtexdir)/project.tex paper.tex $(texbdir)/paper.bbl
 
 #	  See above for a warning and brief discussion on the the pdflatex
 #	  option '-shell-escape'.
+#
+#	  We need the modification to 'LD_LIBRARY_PATH' because we do not
+#	  build LaTeX from source and it uses '/bin/sh' (among other
+#	  possible system-wide things).
+	  export LD_LIBRARY_PATH="$(sys_library_sh_path):$$LD_LIBRARY_PATH"
 	  pdflatex -shell-escape -halt-on-error "$$p"/paper.tex
 
 #	  Come back to the top project directory and copy the built PDF

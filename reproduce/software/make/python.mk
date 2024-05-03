@@ -12,8 +12,8 @@
 #
 # ------------------------------------------------------------------------
 #
-# Copyright (C) 2019-2023 Raul Infante-Sainz <infantesainz@gmail.com>
-# Copyright (C) 2019-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2019-2025 Raul Infante-Sainz <infantesainz@gmail.com>
+# Copyright (C) 2019-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This Makefile is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -93,13 +93,44 @@ $(ibidir)/python-$(python-version): $(ibidir)/libffi-$(libffi-version)
 	  export CC=clang
 	  export CXX=clang++
 	fi
-	$(call gbuild, python-$(python-version),, \
-	       --without-ensurepip \
-	       --with-system-ffi \
-	       --enable-shared, -j$(numthreads))
+
+#	Unpack the tarball (see below for the necessary modification).
+	cd $(ddir)
+	unpackdir=python-$(python-version)
+	tar -xf $(tdir)/$$unpackdir.tar.lz
+	cd $$unpackdir
+	$(shsrcdir)/prep-source.sh $(ibdir)
+
+#	Python's 'setup.py' uses 'os.system' to run shell scripts. On the
+#	other hand 'os.system' only runs '/bin/sh' (which has its own
+#	libraries to link to and those are blocked at this level). So we
+#	need to add an extra line on top of the 'os.system' funciton and
+#	put '/usr/lib' in 'LD_LIBRARY_PATH' within Python's environment for
+#	system calls (with 'os.putenv').
+	awk '{if(/os.system\(/) \
+	       { print "    os.putenv(\"LD_LIBRARY_PATH\", \"$$LD_LIBRARY_PATH:$(sys_library_sh_path)\");"; \
+	         print $$0;} \
+	      else print $$0}' \
+	    setup.py > setup-tmp.py
+	mv setup-tmp.py setup.py
+
+#	Do the basic installation and delete the temporary directory.
+	./configure SHELL=$(ibdir)/bash \
+	            --enable-optimizations \
+	            --without-ensurepip \
+	            --prefix="$(idir)" \
+	            --with-system-ffi \
+	            --enable-shared
+	$(makewshell) -j$(numthreads)
+	$(makewshell) install -j$(numthreads)
+	cd ..
+	rm -rf $$unpackdir
+
+#	Set the necessary environment variables and finish the build.
 	ln -sf $(ildir)/python$(python-major-version)  $(ildir)/python
 	ln -sf $(ibdir)/python$(python-major-version)  $(ibdir)/python
-	ln -sf $(iidir)/python$(python-major-version)m $(iidir)/python$(python-major-version)
+	ln -sf $(iidir)/python$(python-major-version)m \
+	       $(iidir)/python$(python-major-version)
 	rm -rf $(ipydir)
 	mkdir $(ipydir)
 	echo "Python $(python-version)" > $@

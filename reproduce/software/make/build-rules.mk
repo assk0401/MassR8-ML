@@ -3,7 +3,7 @@
 # imported into 'basic.mk' and 'high-level.mk'. They should be activated
 # with Make's 'Call' function.
 #
-# Copyright (C) 2018-2023 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2018-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This Makefile is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -207,17 +207,10 @@ gbuild = if [ x$(static_build) = xyes ] && [ "x$(2)" = xstatic ]; then \
 	 else confscript="$(strip $(6))"; \
 	 fi; \
 	     \
-	 if   [ -f $(ibdir)/bash ]; then \
-	   if [ -f "$$confscript" ]; then \
-	     sed -e's|\#\! /bin/sh|\#\! $(ibdir)/bash|' \
-	         -e's|\#\!/bin/sh|\#\! $(ibdir)/bash|' \
-	         $$confscript > $$confscript-tmp; \
-	     mv $$confscript-tmp $$confscript; \
-	     chmod +x $$confscript; \
-	   fi; \
+	 $(shsrcdir)/prep-source.sh $(ibdir); \
+	 if [ -f $(ibdir)/bash ]; then \
 	   shellop="SHELL=$(ibdir)/bash"; \
-	 elif [ -f /bin/bash ]; then shellop="SHELL=/bin/bash"; \
-	 else shellop="SHELL=/bin/sh"; \
+	 else shellop="SHELL=$(ibdir)/dash"; \
 	 fi; \
 	     \
 	 if [ x$$gbuild_prefix = x ]; then prefixdir="$(idir)"; \
@@ -255,10 +248,7 @@ gbuild = if [ x$(static_build) = xyes ] && [ "x$(2)" = xstatic ]; then \
 # CMake
 # -----
 #
-# According to the link below, in CMake '/bin/sh' is hardcoded, so there is
-# no way to change it unfortunately!
-#
-# https://stackoverflow.com/questions/21167014/how-to-set-shell-variable-in-makefiles-generated-by-cmake
+# Used by packages that are built with CMake.
 cbuild = if [ x$(static_build) = xyes ] && [ $(2)x = staticx ]; then \
 	   export LDFLAGS="$$LDFLAGS -static"; \
 	   opts="-DBUILD_SHARED_LIBS=OFF"; \
@@ -268,13 +258,18 @@ cbuild = if [ x$(static_build) = xyes ] && [ $(2)x = staticx ]; then \
 	 utarball=$(tdir)/$$tarball; \
 	 $(call uncompress); \
 	 cd $(1); \
-	 rm -rf project-build; \
-	 mkdir project-build; \
-	 cd project-build; \
+	 $(shsrcdir)/prep-source.sh $(ibdir); \
+	 if [ -f $(ibdir)/bash ]; then \
+	   shellop="SHELL=$(ibdir)/bash"; \
+	 else shellop="SHELL=$(ibdir)/dash"; \
+	 fi; \
+	 rm -rf maneage-build; \
+	 mkdir maneage-build; \
+	 cd maneage-build; \
 	 cmake .. -DCMAKE_LIBRARY_PATH=$(ildir) \
 	          -DCMAKE_INSTALL_PREFIX=$(idir) \
 	          -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON $$opts $(3); \
-	 make; \
-	 make install; \
+	 make $$shellop; \
+	 make $$shellop install; \
 	 cd ../..; \
 	 rm -rf $(1)
