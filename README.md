@@ -680,11 +680,11 @@ steps.
      # If the data or software directories don't exist, put them in the build
      # directory (they will remain empty, but this helps in simplifiying the
      # mounting command!).
-     if ! [ -d $data_dir ]; then
+     if ! [ x$data_dir = x ]; then
          data_dir="$build_dir"/data
          if ! [ -d $data_dir ]; then mkdir $data_dir; fi
      fi
-     if ! [ -d $software_dir ]; then
+     if ! [ x$software_dir = x ]; then
          software_dir="$build_dir"/tarballs-software
          if ! [ -d $software_dir ]; then mkdir $software_dir; fi
      fi
@@ -703,7 +703,17 @@ steps.
      chmod +x docker-run
      ```
 
- 8.  You can now start the Docker image by executing your newly added
+ 8.  Start the Docker daemon (root permissions required). If the operating
+     system uses systemd you can use the command below. If you want the
+     Docker daemon to be available after a reboot also (so you don't have
+     to restart it after turning off your computer), run this command again
+     but replacing `start` with `enable`.
+
+     ```shell
+     systemctl start docker
+     ```
+
+ 9.  You can now start the Docker image by executing your newly added
      script like below (it will ask for your root password). You will
      notice that you are in the Docker container with the changed prompt.
 
@@ -711,7 +721,7 @@ steps.
      ./docker-run
      ```
 
- 9.  You are now within the container. First, we'll add the GNU C and C++
+ 10.  You are now within the container. First, we'll add the GNU C and C++
      compilers (which are necessary to build our own programs in Maneage)
      and the GNU WGet downloader (which may be necessary if you don't have
      a core software's tarball already). Maneage will build pre-defined
@@ -735,7 +745,7 @@ steps.
      source ~/.bashrc
      ```
 
- 10. Now that the compiler is ready, we can start Maneage's
+ 11. Now that the compiler is ready, we can start Maneage's
      configuration. So let's go into the project source directory and run
      these commands to build the software environment.
 
@@ -746,7 +756,7 @@ steps.
                          --software-dir=/home/maneager/tarballs-software
      ```
 
- 11. After the configuration finishes successfully, it will say so. It will
+ 12. After the configuration finishes successfully, it will say so. It will
      then ask you to run `./project make`. **But don't do that
      yet**. Keep this Docker container open and don't exit the container or
      terminal. Open a new terminal, and follow the steps described in the
@@ -759,13 +769,13 @@ steps.
      docker image list      # In the other terminal.
      ```
 
- 12. Now that you have safely "committed" your current Docker container
+ 13. Now that you have safely "committed" your current Docker container
      into a separate Docker image, you can **exit the container** safely
      with the `exit` command. Don't worry, you won't loose the built
      software environment: it is all now saved separately within the Docker
      image.
 
- 13. Re-open your `docker-run` script and change `MANEAGEBASE` to
+ 14. Re-open your `docker-run` script and change `MANEAGEBASE` to
      `MY-PROJECT-ENV` (or any other name you set for the environment you
      committed above).
 
@@ -773,7 +783,7 @@ steps.
      emacs docker-run
      ```
 
- 14. That is it! You can now always easily enter your container (only for
+ 15. That is it! You can now always easily enter your container (only for
      the software environemnt) with the command below. Within the
      container, any file you save/edit in the `source` directory of the
      docker container is the same file on your host OS and any file you
@@ -787,7 +797,7 @@ steps.
      ./docker-run
      ```
 
- 15. In case you want to store the image as a single file as backup or to
+ 16. In case you want to store the image as a single file as backup or to
      move to another computer, you can run the commands below. They will
      produce a single `project-env.tar.gz` file.
 
@@ -796,7 +806,7 @@ steps.
      gzip --best project-env.tar
      ```
 
- 16. To load the tarball above into a clean docker environment (for example
+ 17. To load the tarball above into a clean docker environment (for example
      on another system) copy the `my-project-env.tar.gz` file there and run
      the command below. You can then create the `docker-run` script for
      that system and run it to enter. Just don't forget that if your

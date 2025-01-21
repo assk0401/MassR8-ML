@@ -79,7 +79,7 @@ $(ibidir)/libxau-$(libxau-version): $(ibidir)/xorgproto-$(xorgproto-version)
 
 # Library implementing the X Display Manager Control Protocol.
 $(ibidir)/libxdmcp-$(libxdmcp-version): $(ibidir)/libxau-$(libxau-version)
-	tarball=libXdmcp-$(libxdmcp-version).tar.bz2
+	tarball=libXdmcp-$(libxdmcp-version).tar.lz
 	$(call import-source, $(libxdmcp-url), $(libxdmcp-checksum))
 	$(call gbuild, libXdmcp-$(libxdmcp-version),,$(XORG_CONFIG), V=1)
 	echo "libXdmcp (Xorg) $(libxdmcp-version)" > $@

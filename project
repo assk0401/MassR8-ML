@@ -34,6 +34,7 @@ jobs=0     # 0 is for the default for the 'configure.sh' script.
 group=
 debug=
 host_cc=0
+offline=
 operation=
 build_dir=
 input_dir=
@@ -184,6 +185,8 @@ do
   -e*|--existing-conf=*) on_off_option_error --existing-conf -e;;
   --host-cc)             host_cc=1;                                                                        shift;;
   --host-cc=*)           on_off_option_error --host-cc;;
+  --offline)             offline=1;                                                                        shift;;
+  --offline=*)           on_off_option_error --offline;;
   -i|--input-dir)        input_dir="$2";                                     check_v "$1" "$input_dir";    shift;shift;;
   -i=*|--input-dir=*)    input_dir="${1#*=}";                                check_v "$1" "$input_dir";    shift;;
   -i*)                   input_dir=$(echo    "$1" | sed -e's/-i//');         check_v "$1" "$input_dir";    shift;;
@@ -455,6 +458,7 @@ case $operation in
         export jobs=$jobs
         export debug=$debug
         export host_cc=$host_cc
+        export offline=$offline
         export build_dir=$build_dir
         export input_dir=$input_dir
         export scriptname=$scriptname

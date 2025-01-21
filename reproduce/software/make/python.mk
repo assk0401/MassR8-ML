@@ -106,13 +106,17 @@ $(ibidir)/python-$(python-version): $(ibidir)/libffi-$(libffi-version)
 #	libraries to link to and those are blocked at this level). So we
 #	need to add an extra line on top of the 'os.system' funciton and
 #	put '/usr/lib' in 'LD_LIBRARY_PATH' within Python's environment for
-#	system calls (with 'os.putenv').
-	awk '{if(/os.system\(/) \
-	       { print "    os.putenv(\"LD_LIBRARY_PATH\", \"$$LD_LIBRARY_PATH:$(sys_library_sh_path)\");"; \
-	         print $$0;} \
-	      else print $$0}' \
-	    setup.py > setup-tmp.py
-	mv setup-tmp.py setup.py
+#	system calls (with 'os.putenv'). As of Python 3.13.2 the tarball no
+#	longer has an 'setup.py'. But when it did, the change below was
+#	necessary.
+	if [ -f setup.py ]; then
+	   awk '{if(/os.system\(/) \
+	          { print "    os.putenv(\"LD_LIBRARY_PATH\", \"$$LD_LIBRARY_PATH:$(sys_library_sh_path)\");"; \
+	            print $$0;} \
+	         else print $$0}' \
+	       setup.py > setup-tmp.py
+	   mv setup-tmp.py setup.py
+	fi
 
 #	Do the basic installation and delete the temporary directory.
 	./configure SHELL=$(ibdir)/bash \

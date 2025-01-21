@@ -118,11 +118,16 @@ else
 
 endif
 
+# Disable the TeXLive target if `--offline`
+ifneq ($(strip $(offline)),1)
+  target-texlive := $(itidir)/texlive
+endif
+
 # Ultimate Makefile target.
 all: $(foreach p, $(targets-proglib), $(ibidir)/$(p)) \
      $(foreach p, $(targets-python), $(ipydir)/$(p)) \
      $(foreach p, $(targets-r-cran),  $(ircrandir)/$(p)) \
-     $(itidir)/texlive
+     $(target-texlive)
 
 # Define the shell environment
 # ----------------------------
@@ -433,11 +438,14 @@ $(ibidir)/cfitsio-$(cfitsio-version):
 #	Continue the standard build on the customized tarball. Note that
 #	with the installation of CFITSIO, 'fpack' and 'funpack' are not
 #	installed by default. Because of that, they are added explicity.
+#
+#	Note that older versions of CFITSIO (before 4.4.0) require a
+#	specific 'shared' target for the building of the shared libraries.
 	export gbuild_tar=$(ddir)/$$customtar
 	$(call gbuild, cfitsio-$(cfitsio-version), , \
 	               --enable-sse2 --enable-reentrant \
 	               --with-bzip2=$(idir), , \
-	               make shared fpack funpack)
+	               make fpack funpack)
 	rm $$customtar
 	echo "CFITSIO $(cfitsio-version)" > $@
 
@@ -921,8 +929,8 @@ $(ibidir)/libgit2-$(libgit2-version): $(ibidir)/cmake-$(cmake-version)
 	              -DUSE_SSH=OFF -DBUILD_CLAR=OFF \
 	              -DTHREADSAFE=ON -DUSE_ICONV=OFF )
 	if [ x$(on_mac_os) = xyes ]; then
-	  install_name_tool -id $(ildir)/libgit2.1.3.dylib \
-	                        $(ildir)/libgit2.1.3.dylib
+	  install_name_tool -id $(ildir)/libgit2.1.9.dylib \
+	                        $(ildir)/libgit2.1.9.dylib
 	fi
 	echo "Libgit2 $(libgit2-version)" > $@
 
@@ -1156,7 +1164,9 @@ $(ibidir)/ghostscript-$(ghostscript-version): \
 	            --disable-cups \
 	            --enable-dynamic \
 	            --disable-compile-inits \
-	            CFLAGS="-DPNG_ARM_NEON_OPT=0"
+		    --disable-hidden-visibility \
+		    CFLAGS="-DPNG_ARM_NEON_OPT=0" \
+		    LDFLAGS=-Wl,--copy-dt-needed-entries
 
 #	Build and install the program and the shared libraries.
 	make    V=1 -j$(numthreads)
@@ -1642,7 +1652,10 @@ $(ibidir)/swig-$(swig-version):
 # '$(ibdir)'. If any program does need 'util-linux' libraries, they can
 # simply add the proper directories to the environment variables, see
 # 'fontconfig' for example.
-$(ibidir)/util-linux-$(util-linux-version): | $(idircustom)
+$(ibidir)/util-linux-$(util-linux-version): \
+                     $(ibidir)/autoconf-$(autoconf-version) \
+                     $(ibidir)/automake-$(automake-version) \
+                     | $(idircustom)
 
 #	Import the source.
 	tarball=util-linux-$(util-linux-version).tar.lz
@@ -1663,18 +1676,20 @@ $(ibidir)/util-linux-$(util-linux-version): | $(idircustom)
 	  git apply util-linux-$(util-linux-version)-macos.patch
 	fi
 
-#       The 'mkswap' feature needs low-level file system and kernel headers
-#       that are not always available (in particular on older Linux
-#       kernels). Also, creating SWAP space will need root permissions, so
-#       its not something a Maneager may need! Unfortunately there is no
-#       configuration option to disable this so we'll have to disable it
-#       manually by commenting the relevant files in the
-#       'configure.ac'. Having a more recent 'configure.ac' will trigger
-#       the './configure' script to be re-created after the first run, but
-#       it is pretty fast and not a problem.
+#	The 'mkswap' feature needs low-level file system and kernel headers
+#	that are not always available (in particular on older Linux
+#	kernels). Also, creating SWAP space will need root permissions, so
+#	its not something a Maneager may need! Unfortunately there is no
+#	configuration option to disable this so we'll have to disable it
+#	manually by commenting the relevant files in the
+#	'configure.ac'.
 	sed -e's|UL_BUILD_INIT(\[mkswap\], \[yes\])|UL_BUILD_INIT(\[mkswap\], \[no\])|' \
 	    -i configure.ac
 
+#	Having updated 'configure.ac', we need to re-generate the
+#	'./configure' script with 'autoreconf' (which is part of Autoconf
+#	and needs Automake; hence why they are dependencies.
+	autoreconf -f
 
 #	Configure Util-linux
 	export CONFIG_SHELL=$(ibdir)/bash
@@ -1682,6 +1697,7 @@ $(ibidir)/util-linux-$(util-linux-version): | $(idircustom)
 	            --disable-dependency-tracking \
 	            --enable-libmount-support-mtab \
 	            --disable-silent-rules \
+	            --disable-liblastlog2 \
 	            --disable-mountpoint \
 	            --disable-libmount \
 	            --disable-unshare \

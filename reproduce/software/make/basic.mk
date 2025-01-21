@@ -774,7 +774,7 @@ $(ibidir)/openssl-$(openssl-version): $(ibidir)/podlators-$(podlators-version) \
 #	First download the certificates and copy them into the
 #	installation directory.
 	tarball=cert.pem-$(certpem-version)
-	$(call import-source, $(cert-url), $(cert-checksum))
+	$(call import-source, $(certpem-url), $(certpem-checksum))
 	cp $(tdir)/cert.pem-$(certpem-version) $(idir)/etc/ssl/cert.pem
 
 #	Now download the OpenSSL tarball.

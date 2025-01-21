@@ -1612,11 +1612,11 @@ fi
 # which will download the DOI-resolved webpage, and extract the Zenodo-URL
 # of the most recent version from there (using the 'coreutils' tarball as
 # an example, the directory part of the URL for all the other software are
-# the same). This is not done if the option '--debug' is used.
+# the same). This is not done if the options '--debug' or `--offline` are used.
 zenodourl=""
 user_backup_urls=""
 zenodocheck=.build/software/zenodo-check.html
-if [ x$debug = x ]; then
+if [ x$debug = x ] && [ x$offline = x ]; then
   if $downloader $zenodocheck https://doi.org/10.5281/zenodo.3883409; then
       zenodourl=$(sed -n -e'/coreutils/p' $zenodocheck \
                       | sed -n -e'/http/p' \
@@ -1723,6 +1723,7 @@ fi
                on_mac_os=$on_mac_os \
                sys_cpath=$sys_cpath \
                host_cc=$host_cc \
+               offline=$offline \
                -j$numthreads
 
 

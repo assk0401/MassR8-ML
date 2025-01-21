@@ -159,12 +159,19 @@ for f in $allfiles; do
     name=$(echo $(basename $f) \
 	       | sed -e 's/.tar.*//' -e's/_/-/')
 
+    # Lzip will not be available to unpack Lzip itself, so just use Tar.
+    if [[ $name =~ ^lzip ]]; then
+      outname=$name.tar
+    else
+      outname=$name.tar.lz
+    fi
+
     # Skip previously packed files
-    if [ -f $odir/$name.tar.lz ]; then
+    if [ -f $odir/$outname ]; then
 
         # Print the info message if not in quiet mode
         if [ -z $quiet ]; then
-            echo "$scriptname: $odir/$name.tar.lz: already present in output directory"
+            echo "$scriptname: $odir/$outname: already present in output directory"
         fi
 
         # skip this file
@@ -206,19 +213,26 @@ for f in $allfiles; do
     # Put the current date on all the files because some packagers will not
     # add dates to their release tarballs, resulting in dates of the
     # Unix-time zero'th second (1970-01-01 at 00:00:00)!
-    touch $(find "$name"/ -type f)
+    # -print0 is needed for those tarballs that has paths with spaces. For
+    # the same reason it's needed also `xargs -0`. (`xargs` is needed also
+    # for large tarballs such as gcc's)
+    find "$name"/ -type f -print0 | xargs -0 touch
 
     # Pack with recommended options
     tar -c -Hustar --owner=root --group=root \
         -f $name.tar $name/
-    lzip -9 $name.tar
+
+    # Lzip will not be available when unpacking Lzip, so we just use Tar.
+    if [[ ! $name =~ ^lzip ]]; then
+        lzip -9 $name.tar
+    fi
 
     # Move the compressed file from the temporary directory to the target
     # output directory
-    mv $name.tar.lz $odir/
+    mv $outname $odir/
 
     # Print the sha512sum along with the filename for a quick reference
-    echo $(sha512sum $odir/$name.tar.lz)
+    echo $(sha512sum $odir/$outname)
 
     # Clean up the temporary directory
     rm -rf $tmpdir
