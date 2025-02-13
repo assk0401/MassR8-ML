@@ -1098,18 +1098,28 @@ $(ibidir)/cmake-$(cmake-version):
 #	SHELL=$(SHELL) and we have defined this script.
 	export MAKE="$(makewshell)"
 
-#	Go into the unpacked directory and build CMake.
+#	Go into the unpacked directory and prepare CMake.
 	cd $(ddir)
 	rm -rf cmake-$(cmake-version)
 	tar -xf $(tdir)/$$tarball
 	cd cmake-$(cmake-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
-	./bootstrap --prefix=$(idir) --system-curl --system-zlib \
-	            --system-bzip2 --system-liblzma --no-qt-gui \
+
+#	Bootstrap, build and install CMake:
+#	- With the '--no-system-libs' option, CMake builds and statically
+#	  links all the libraries it needs. Even though some of those (like
+#	  liblzma, libcurl, zlib or bzip2) are within Maneage, we
+#	  discovered that CMake can get confused and use out-of-Maneage
+#	  libraries (https://savannah.nongnu.org/bugs/?63043).
+	./bootstrap --no-qt-gui \
+	            --prefix=$(idir) \
+	            --no-system-libs \
 	            --parallel=$(numthreads)
 	$(makewshell) VERBOSE=1 LIBS="$$LIBS -lssl -lcrypto -lz" \
 	              -j$(numthreads)
 	$(makewshell) install
+
+#	Clean up.
 	cd ..
 	rm -rf cmake-$(cmake-version)
 	echo "CMake $(cmake-version)" > $@
@@ -1960,10 +1970,19 @@ $(itidir)/texlive-ready-tlmgr: reproduce/software/config/texlive.conf
 # Live itself (only very basic TeX and LaTeX) and the installation of its
 # necessary packages into two packages.
 #
-# Note that Biber needs to link with libraries like libnsl. However, we
-# don't currently build biber from source. So we can't choose the library
-# version. But we have the source and build instructions for the 'nsl'
-# library. When we later build biber from source, we can easily use them.
+# Note that we do not build the TeXLive executables (like Biber) from
+# source. So in case they need special libraries, we can't choose the
+# library version here (for example see [1] and [2]). In such cases there
+# is no solution but to manually add the location necessary library to
+# LD_LIBRARY_PATH when calling the respective LaTeX command in
+# 'reproduce/analysis/make/paper.mk'. Fortunately as of Biber 2.20, it does
+# not depend on anything except the C library (all dependencies are now
+# statically linked), so problems [1] and [2] will not happen. But this can
+# generally happen for any other tool/OS, so it is important to build
+# TeXLive from source as soon as possible [3].
+#      [1] https://github.com/plk/biber/issues/445
+#      [2] https://savannah.nongnu.org/bugs/index.php?63175
+#      [3] https://savannah.nongnu.org/task/?15267
 $(itidir)/texlive: reproduce/software/config/texlive-packages.conf \
                    $(itidir)/texlive-ready-tlmgr
 

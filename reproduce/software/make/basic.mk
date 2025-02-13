@@ -273,46 +273,10 @@ $(ibidir)/gzip-$(gzip-version): | $(ibdir) $(ildir) $(lockdir)
 	$(call gbuild, gzip-$(gzip-version), static, , V=1)
 	echo "GNU Gzip $(gzip-version)" > $@
 
-# 2022-07-14 B Roukema
-#
-# xz-5.2.5 fails on (at least) CentOS 7 (Redhat) systems while trying
-# to compile 'cmake' in Maneage - this is Maneage bug 62700 [1].
-#
-# The fix appears to be just a few lines, although it's not clear
-# how robust or long-term it is. Since we don't yet have 'patch' in
-# 'basic.mk', this file has to be copied into place rather than patched.
-
-# xz-5.2.5_src_liblzma_liblzma.map is a patched
-# version of xz-5.2.5/src/liblzma/liblzma.map based on discussion at
-# [1] + [2] + the patch file [3].
-#
-# [1] https://savannah.nongnu.org/bugs/index.php?62700
-# [2] https://github.com/easybuilders/easybuild-easyconfigs/issues/14991
-# [3] https://raw.githubusercontent.com/easybuilders/easybuild-easyconfigs/bcebb3320ffb63f9804ca8d4d64d1822ec7c9792/easybuild/easyconfigs/x/XZ/XZ-5.2.5_compat-libs.patch
 $(ibidir)/xz-$(xz-version): $(ibidir)/gzip-$(gzip-version)
-
-#	Prepare the tarball.
 	tarball=xz-$(xz-version).tar.lz
 	$(call import-source, $(xz-url), $(xz-checksum))
-
-#	Until the bug mentioned above is fixed, we'll can't use the generic
-#	rule.
-#	$(call gbuild, xz-$(xz-version), static)
-
-#	Configure and build with patched file.
-	srcdir=$$(pwd)
-	unpackdir=xz-$(xz-version)
-	patchedfile=xz-5.2.5_src_liblzma_liblzma.map
-	cd $(ddir)
-	rm -rf $$unpackdir
-	tar -x -f $(tdir)/$$tarball
-	cd $$unpackdir
-	cp -pv $$srcdir/reproduce/software/patches/$$patchedfile \
-	       src/liblzma/liblzma.map # copy the fixed file into place
-	./configure --prefix=$(idir)
-	make install
-	cd ..
-	rm -rf $$unpackdir
+	$(call gbuild, xz-$(xz-version), static)
 	echo "XZ Utils $(xz-version)" > $@
 
 $(ibidir)/bzip2-$(bzip2-version): $(ibidir)/gzip-$(gzip-version)
@@ -1247,7 +1211,8 @@ $(ibidir)/binutils-$(binutils-version): \
 
 #	  Build binutils with the standard 'gbuild' function.
 	  $(call gbuild, binutils-$(binutils-version), static, \
-	                 --with-lib-path=$(sys_library_path), \
+	                 --with-lib-path=$(sys_library_path) \
+	                 --enable-gprofng=no, \
 	                 -j$(numthreads) V=1)
 
 #	  The 'ld' linker of Binutils needs several '*crt*.o' files from
@@ -1375,21 +1340,35 @@ $(ibidir)/gcc-$(gcc-version): $(ibidir)/binutils-$(binutils-version)
 #	  to avoid building so many small/temporary files and possibly
 #	  harming the hard-drive or SSD. But if the RAM doesn't have enough
 #	  space, we should use the hard-drive or SSD. During its build,
-#	  GCC's build directory will become about 7GiB (in units of 1024^3
-#	  bytes, for GCC 12.1.0, which corresponds to 7.5GB, in units of
-#	  1000^3 bytes). So at this step, we make sure that we have more
-#	  than 12GiB before GCC starts to build. See the figure in the link
-#	  below for GCC's RAM consumption as a function of time:
+#	  GCC's build directory will become several gigabytes and the build
+#	  also needs RAM. You can track the RAM usage of the system with a
+#	  1-second resolution (if no other RAM consuming program is running
+#	  while building GCC) with the command below (example outputs can
+#	  be seen in https://savannah.nongnu.org/task/index.php?16623).
 #
-#	  https://savannah.nongnu.org/task/?16244#comment12
+#	     c=1; while true; do POSIXLY_CORRECT=1 df -P /dev/shm/maneage-* | awk 'NR==2{print '$c', $3}'; c=$((c+1)); sleep 1; done > mem-usage.txt
+#	    asttable mem-usage.txt -c1,'arith $2 512 x 1024 / 1024 / 1024 /' -o mem.fits
 #
 #	  For POSIX portability and longevity (default sizes might change),
 #	  we use the '-P' option, and we use the environment variable
-#	  POSIXLY_CORRECT=1, so the 'block size' is 512 bytes. We'll also
-#	  allow for about ~0.5 GB at the start.
+#	  POSIXLY_CORRECT=1, so the 'block size' is 512 bytes. In this way,
+#	  to get the actual GiB amount, multiply the value returned above
+#	  by 512 (B/block), then divide by 1024^3 (B/GiB).
 #
-#	  So we need 8 GiB * 1024^3 (B/GiB) / 512 blocks/B = 16777216
-#	  blocks, in blocks of 512 bytes.
+#	  To get the final value to use here, get the maximum used value
+#	  after GCC is fully built and you have stopped the 'while true'
+#	  command above. You can do this with the command below (assumes
+#	  you have Gnuastro).
+#
+#	     aststatistics mem-usage.txt -c2 --maximum | asttable -c'arith $1 7000000 +' -Afixed -B0
+#
+#	  The extra space is because we will assume an extra 3 GiB = 3GiB *
+#	  1024^3 (B/GiB) / 512 (B/block) = 6291456 blocks are necessary for
+#	  the building (let's round it to 7000000!).
+#
+#	  Therefore, we need to make sure that the running system more than
+#	  the necessary amount of space in the RAM. To do this, we use 'df'
+#	  below.
 #
 #	  The 4th column of 'df' is the "available" space at the time of
 #	  running, not the full space. So the 'RAM disk' that the OS
@@ -1399,7 +1378,7 @@ $(ibidir)/gcc-$(gcc-version): $(ibidir)/binutils-$(binutils-version)
 #	  alone - no other Maneage software is built at the same time as
 #	  GCC - so this amount of RAM should be enough.
 	  in_ram=$$(POSIXLY_CORRECT=1 df -P $(ddir) \
-	               | awk 'NR==2{print ($$4>16777216) ? "yes" : "no"}'); \
+	               | awk 'NR==2{print ($$4>26613216) ? "yes" : "no"}'); \
 	  if [ $$in_ram = "yes" ]; then odir=$(ddir)
 	  else
 	    odir=$(BDIR)/software/build-tmp-gcc-due-to-lack-of-space

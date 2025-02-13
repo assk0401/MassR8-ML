@@ -1439,6 +1439,15 @@ fi
 
 
 
+# Make sure the temporary build directory is empty (un-finished
+# source/build files from previous builds can remain there during debugging
+# or software updates).
+rm -rf $tmpblddir/*
+
+
+
+
+
 # Inform the user that the build process is starting
 # -------------------------------------------------
 #
@@ -1575,7 +1584,7 @@ fi
 # cause a crash! To avoid such cases, we need to find the locations of the
 # libraries that the shell needs and temporarily add them to the library
 # search path.
-if [ x"$$on_mac_os" != xyes ]; then
+if [ x"$on_mac_os" != xyes ]; then
     sys_library_sh_path=$(otool -L /bin/sh \
                               | awk '/\/lib/{print $1}' \
                               | sed 's#/[^/]*$##' \
