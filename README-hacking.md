@@ -763,7 +763,7 @@ First custom commit
 
      ```
      Copyright (C) 2018-2025 Existing Name <existing@email.address>
-     Copyright (C) 2024-2025 YOUR NAME <YOUR@EMAIL.ADDRESS>
+     Copyright (C) 2025-2025 YOUR NAME <YOUR@EMAIL.ADDRESS>
      ```
 
  9. **Configure Git for fist time**: If this is the first time you are
@@ -918,6 +918,123 @@ Other basic customizations
      end of the abstract, or under the keywords with a title like
      "reproducible paper". This will encourage them to publish their own
      works in this manner also and also will help spread the word.
+
+
+
+
+
+
+
+
+
+
+Upgrading the Maneage branch of your project
+============================================
+
+In time, Maneage is going to become more and more mature and robust (thanks
+to your feedback and the feedback of other users). Bugs will be fixed and
+new/improved features will be added. So every once and a while, you can run
+the commands below to pull new work that is done in Maneage. If the changes
+are useful for your work, you can merge them with your project to benefit
+from them.
+
+0. Before going into the technicalities of upgrading your project's
+Maneage, it may happen that you don't have the `maneage` branch and
+`origin-maneage` remote any more! This can happen when you clone your own
+project on a different system, or a colleague clones it to collaborate with
+you: the clone won't have the `origin-maneage` remote that you started the
+project with. If this is the case, you can add the `origin-maneage` remote
+and define the `maneage` branch from it using the steps below:
+
+```shell
+$ git remote add origin-maneage https://git.maneage.org/project.git
+$ git fetch origin-maneage maneage
+$ git checkout -b maneage --track origin-maneage/maneage
+```
+
+1. Pull the latest changes on the `maneage` branch and read the commit
+message (full description) of all new changes with the commands below. Just
+be sure that you have already committed any changes in your branch
+(otherwise the checkout command will fail).
+
+```shell
+# Go to the 'maneage' branch and import updates.
+$ git checkout maneage
+$ git pull                            # Get recent work in Maneage
+```
+
+2. Read all the commit messages of the newly imported features/changes. In
+particular pay close attention to the ones starting with 'IMPORTANT': these
+may cause a crash in your project (changing something fundamental in
+Maneage). Replace the `XXXXXXX..YYYYYYY` with hashs mentioned close to
+start of the `git pull` command outputs (prevoius step).
+
+```shell
+$ git log XXXXXXX..YYYYYYY --reverse
+```
+
+3. If you find the updates useful, go to your project's `main` branch and
+import all the updates into it with the commands below. Don't worry about
+the printed outputs (in particular the `CONFLICT`s), we'll clean them up in
+the next step.
+
+```shell
+$ git checkout main
+$ git merge maneage
+
+# Ignore conflicting Maneage files that you had previously deleted
+# in the customization checklist (mostly demonstration files).
+$ git status             # Just for a check
+$ git status --porcelain | awk '/^DU/{system("git rm "$NF)}'
+$ git status             # Just for a check
+```
+
+4. Files with conflicts will be visible from the output of the last command
+above) with the classification `both modified:`. Open one of these files
+with your favorite text editor and correct the conflict (placed in between
+`<<<<<<<`, `=======` and `>>>>>>>`).  Once all conflicts in a file are
+remoted, the file will be automatically removed from the "Unmerged paths"
+of `git status`. So run `git status` after correcting the conflicts of each
+file just to make sure things are clean. TIP: If you want the changes in
+one file to be only from a special branch (`maneage` or `main`, completely
+ignoring changes in the other), use this command:
+
+```shell
+$ git checkout <BRANCH-NAME> -- <FILENAME>
+```
+
+5. Once all the Git conflicts are fixed, it is important to make sure that
+"semantic conflicts" (that don't show up in Git, but can potentially break
+your project) are also fixed. For example updates to software versions
+(their behavior may have changed), or to internal Maneage structure. Hence
+read the commit messages of `git log` carefully to see what has changed. In
+case you see a commit with `IMPORTANT` in its title, the best way is to
+delete your build directory and let the software and project be executed
+from scratch.
+
+```shell
+$ ./project make distclean   # will DELETE ALL your build-directory!!
+$ ./project configure -e
+$ ./project make
+```
+
+6. Once your final product is created at the end of the previous step and
+its contents are what you expect, you are ready to commit the merge. In the
+commit message, Explain any conflicts that you fixed.
+
+```shell
+$ git add -u
+$ git commit
+```
+
+7. When everything is OK, before continuing with your project's work, don't
+forget to push both your `main` branch and your updated `maneage` branch to
+your remote server.
+
+```shell
+$ git push
+$ git push origin maneage
+```
 
 
 
@@ -1488,105 +1605,6 @@ for the benefit of others.
    - *Regular commits*: It is important (and extremely useful) to have the
       history of your project under version control. So try to make commits
       regularly (after any meaningful change/step/result).
-
-   - *Keep Maneage up-to-date*: In time, Maneage is going to become more
-      and more mature and robust (thanks to your feedback and the feedback
-      of other users). Bugs will be fixed and new/improved features will be
-      added. So every once and a while, you can run the commands below to
-      pull new work that is done in Maneage. If the changes are useful for
-      your work, you can merge them with your project to benefit from
-      them. Just pay **very close attention** to resolving possible
-      **conflicts** which might happen in the merge. In particular the
-      "semantic conflicts" that don't show up in Git, but can potentially
-      break your project, for example updates to software versions, or to
-      internal Maneage structure. Hence read the commit messages of `git
-      log` carefully to **see what has changed**. The best way to check is
-      to first complete the steps below, then build your project from
-      scratch (from `./project configure` in a new build-directory).
-
-        ```shell
-        # Go to the 'maneage' branch and import updates.
-        $ git checkout maneage
-        $ git pull                            # Get recent work in Maneage
-
-        # Read all the commit messages of the newly imported
-        # features/changes. In particular pay close attention to the ones
-        # starting with 'IMPORTANT': these may cause a crash in your
-        # project (changing something fundamental in Maneage).
-        #
-        # Replace the XXXXXXX..YYYYYYY with hashs mentioned close to start
-        # of the 'git pull' command outputs.
-        $ git log XXXXXXX..YYYYYYY --reverse
-
-        # Have a look at the commits in the 'maneage' branch in relation
-        # with your project.
-        $ git log --oneline --graph --all # General view of branches.
-
-        # Go to your 'main' branch and import all the updates into
-        # 'main', don't worry about the printed outputs (in particular
-        # the 'CONFLICT's), we'll clean them up in the next step.
-        $ git checkout main
-        $ git merge maneage
-
-        # Ignore conflicting Maneage files that you had previously deleted
-        # in the customization checklist (mostly demonstration files).
-        $ git status             # Just for a check
-        $ git status --porcelain | awk '/^DU/{system("git rm "$NF)}'
-        $ git status             # Just for a check
-
-        # If any files have conflicts, open a text editor and correct the
-        # conflict (placed in between '<<<<<<<', '=======' and '>>>>>>>'.
-        # Once all conflicts in a file are remoted, the file will be
-        # automatically removed from the "Unmerged paths", so run this
-        # command after correcting the conflicts of each file just to make
-        # sure things are clean.
-        git status
-
-        # TIP: If you want the changes in one file to be only from a
-        # special branch ('maneage' or 'main', completely ignoring
-        # changes in the other), use this command:
-        # $ git checkout <BRANCH-NAME> -- <FILENAME>
-
-        # When there are no more "Unmerged paths", you can commit the
-        # merge. In the commit message, Explain any conflicts that you
-        # fixed.
-        git commit
-
-        # Do a clean build of your project (to check for "Semanic
-        # conflicts" (not detected as a conflict by Git, but may cause a
-        # crash in your project). You can backup your build directory
-        # before running the 'distclean' target.
-        #
-        # Any error in the build will be due to low-level changes in
-        # Maneage, so look closely at the commit messages in the Maneage
-        # branch and especially those where the title starts with
-        # 'IMPORTANT'.
-        ./project make distclean  # will DELETE ALL your build-directory!!
-        ./project configure -e
-        ./project make
-
-        # When everything is OK, before continuing with your project's
-        # work, don't forget to push both your 'main' branch and your
-        # updated 'maneage' branch to your remote server.
-        git push
-        git push origin maneage
-        ```
-
-   - *Adding Maneage to a fork of your project*: As you and your colleagues
-      continue your project, it will be necessary to have separate
-      forks/clones of it. But when you clone your own project on a
-      different system, or a colleague clones it to collaborate with you,
-      the clone won't have the `origin-maneage` remote that you started the
-      project with. As shown in the previous item above, you need this
-      remote to be able to pull recent updates from Maneage. The steps
-      below will setup the `origin-maneage` remote, and a local `maneage`
-      branch to track it, on the new clone.
-
-        ```shell
-        $ git remote add origin-maneage https://git.maneage.org/project.git
-        $ git fetch origin-maneage
-        $ git checkout -b maneage --track origin-maneage/maneage
-        ```
 
    - *Commit message*: The commit message is a very important and useful
       aspect of version control. To make the commit message useful for
