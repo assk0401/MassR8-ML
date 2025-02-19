@@ -563,7 +563,7 @@ fi
 # similarly different location.
 sys_cpath=""
 sys_library_path=""
-if [ x"$$on_mac_os" != xyes ]; then
+if [ x"$on_mac_os" != xyes ]; then
 
     # Get the GCC target name of the compiler, when its given, special
     # C libraries and headers are in a sub-directory of the host.
@@ -1584,7 +1584,7 @@ fi
 # cause a crash! To avoid such cases, we need to find the locations of the
 # libraries that the shell needs and temporarily add them to the library
 # search path.
-if [ x"$on_mac_os" != xyes ]; then
+if [ x"$on_mac_os" = xyes ]; then
     sys_library_sh_path=$(otool -L /bin/sh \
                               | awk '/\/lib/{print $1}' \
                               | sed 's#/[^/]*$##' \
