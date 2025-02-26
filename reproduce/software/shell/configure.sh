@@ -1590,20 +1590,37 @@ fi
 # cause a crash! To avoid such cases, we need to find the locations of the
 # libraries that the shell needs and temporarily add them to the library
 # search path.
+#
+# About the 'grep -v "(0x[^)]*)"' term (from bug 66847, see [1]): On some
+# systems [2], the output of 'ldd /bin/sh' includes a line for the vDSO [3]
+# that is different to the formats that are assumed, prior to this commit,
+# by the algorithm in 'configure.sh' when evaluating the variable
+# 'sys_library_sh_path'. This leads to a fatal syntax error in (at least)
+# 'ncurses', because the option using 'sys_library_sh_path' contains an
+# unquoted RAM address in parentheses.  Even if the address were quoted, it
+# would still be incorrect. This 'grep command excludes candidate host path
+# strings that look like RAM addresses to address the problem.
+#
+# [1] https://savannah.nongnu.org/bugs/index.php?66847
+# [2] https://stackoverflow.com/questions/34428037/how-to-interpret-the-output-of-the-ldd-program
+# [3] man vdso
 if [ x"$on_mac_os" = xyes ]; then
     sys_library_sh_path=$(otool -L /bin/sh \
                               | awk '/\/lib/{print $1}' \
                               | sed 's#/[^/]*$##' \
                               | sort \
                               | uniq \
-                              | awk '{printf "%s:", $1}END{printf "\b"}')
+                              | awk '{if (NR==1) printf "%s",  $1; \
+                                      else       printf ":%s", $1}')
 else
     sys_library_sh_path=$(ldd /bin/sh \
                               | awk '{if($3!="") print $3}' \
                               | sed 's#/[^/]*$##' \
+                              | grep -v "(0x[^)]*)" \
                               | sort \
                               | uniq \
-                              | awk '{printf "%s:", $1}END{printf "\b"}')
+                              | awk '{if (NR==1) printf "%s",  $1; \
+                                      else       printf ":%s", $1}')
 fi
 
 
