@@ -18,13 +18,14 @@
 
 *~
 *\#
-*.txt
 *.aux
 *.log
-*.pdf
 *.out
-*.zip
+*.pdf
+*.sif
 *.swp
+*.txt
+*.zip
 .nfs*
 mmap_*
 *.tar.gz
@@ -32,6 +33,7 @@ mmap_*
 
 .tex
 build
+run.sh
 .local
 .build
 Makefile
@@ -40,7 +42,7 @@ tex/tikz
 .DS_Store
 .texlive*
 LOCAL.conf
-docker-run
+timing.txt
 tex/pipeline
 LOCAL_tmp.mk
 LOCAL_old.mk

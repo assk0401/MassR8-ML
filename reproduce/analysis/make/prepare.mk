@@ -25,7 +25,7 @@
 #
 # We need to remove the 'prepare' word from the list of 'makesrc'.
 prepare-dep = $(filter-out prepare, $(makesrc))
-$(bsdir)/preparation-done.mk: \
+$(badir)/preparation-done.mk: \
                 $(foreach s, $(prepare-dep), $(mtexdir)/$(s).tex)
 
 #	If you need to add preparations (mainly automatically generated

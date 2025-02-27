@@ -99,7 +99,7 @@ $(ibidir)/python-$(python-version): $(ibidir)/libffi-$(libffi-version)
 #	Unpack the tarball (see below for the necessary modification).
 	cd $(ddir)
 	unpackdir=python-$(python-version)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
 
@@ -215,7 +215,7 @@ pybuild = cd $(ddir); \
 	packagedir=$(strip $(2)); \
 	if (printf "$$packagedir" | grep "[a-z][a-z]"); then rm -rf $$packagedir; fi; \
 	printf "\nStarting to install python package with maneage pybuild rule: $(4)\n ..."; \
-	if ! $(1) $(tdir)/$$tarball; then \
+	if ! $(1) $(tdir)/$$tarball --no-same-owner --no-same-permissions; then \
 	  echo; echo "Tar error"; exit 1; \
 	fi; \
 	cd $$packagedir; \

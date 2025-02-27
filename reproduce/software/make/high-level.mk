@@ -348,7 +348,8 @@ $(ibidir)/atlas-$(atlas-version):
 #	'rpath_command'.
 	export LDFLAGS=-L$(ildir)
 	cd $(ddir)
-	tar -xf $(tdir)/atlas-$(atlas-version).tar.lz
+	tar -xf $(tdir)/atlas-$(atlas-version).tar.lz \
+	    --no-same-owner --no-same-permissions
 	cd ATLAS
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	rm -rf build
@@ -405,7 +406,7 @@ $(ibidir)/boost-$(boost-version): \
 	rm -rf $(ddir)/$$unpackdir
 	topdir=$(pwd)
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	./bootstrap.sh --prefix=$(idir) --with-libraries=all \
@@ -427,7 +428,8 @@ $(ibidir)/cfitsio-$(cfitsio-version):
 #	systems. So we need to change it to our library installation
 #	path. It doesn't affect GNU/Linux, so we'll just do it in any case
 #	to keep things clean.
-	topdir=$(pwd); cd $(ddir); tar -xf $(tdir)/$$tarball
+	topdir=$(pwd); cd $(ddir)
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	customtar=cfitsio-$(cfitsio-version)-custom.tar.gz
 	cd cfitsio-$(cfitsio-version)
 	sed -i -e's|@rpath|$(ildir)|g' configure
@@ -467,7 +469,8 @@ $(ibidir)/eigen-$(eigen-version):
 	tarball=eigen-$(eigen-version).tar.lz
 	$(call import-source, $(eigen-url), $(eigen-checksum))
 	rm -rf $(ddir)/eigen-eigen-*
-	topdir=$(pwd); cd $(ddir); tar -xf $(tdir)/$$tarball
+	topdir=$(pwd); cd $(ddir)
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd eigen-$(eigen-version)
 	if ! [ -d $(iidir)/eigen3 ]; then mkdir $(iidir)/eigen3; fi
 	cp -r Eigen/* $(iidir)/eigen3/         # Some expect 'eigen3'.
@@ -597,7 +600,7 @@ $(ibidir)/healpix-$(healpix-version): $(healpix-python-dep) \
 	fi
 	rm -rf $(ddir)/Healpix_$(healpix-version)
 	topdir=$(pwd); cd $(ddir);
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd Healpix_$(healpix-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	cd src/C/autotools
@@ -689,7 +692,7 @@ $(ibidir)/libpaper-$(libpaper-version): \
 
 #	Unpack, build the configure system, build and install.
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	unpackdir=libpaper-$(libpaper-version)
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
@@ -824,7 +827,7 @@ $(ibidir)/ninjabuild-$(ninjabuild-version): $(ibidir)/cmake-$(cmake-version)
 	tarball=ninjabuild-$(ninjabuild-version).tar.lz
 	$(call import-source, $(ninjabuild-url), $(ninjabuild-checksum))
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd ninjabuild-$(ninjabuild-version)
 	cmake -Bbuild-cmake
 	cmake --build build-cmake -j$(numthreads)
@@ -839,7 +842,7 @@ $(ibidir)/openblas-$(openblas-version):
 	$(call import-source, $(openblas-url), $(openblas-checksum))
 	if [ x$(on_mac_os) = xyes ]; then export CC=clang; fi
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd openblas-$(openblas-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	make -j$(numthreads)
@@ -1048,7 +1051,7 @@ $(ibidir)/astrometrynet-$(astrometrynet-version): \
 #	'astrometrynet'
 	cd $(ddir)
 	rm -rf astrometry.net-$(astrometrynet-version)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd astrometry.net-$(astrometrynet-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	sed -e 's|cat /proc/cpuinfo|echo "Ignoring CPU info"|' \
@@ -1087,7 +1090,7 @@ $(ibidir)/cdsclient-$(cdsclient-version):
 	tarball=cdsclient-$(cdsclient-version).tar.lz
 	$(call import-source, $(cdsclient-url), $(cdsclient-checksum))
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd cdsclient-$(cdsclient-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	touch *
@@ -1120,7 +1123,7 @@ $(ibidir)/cmake-$(cmake-version):
 #	Go into the unpacked directory and prepare CMake.
 	cd $(ddir)
 	rm -rf cmake-$(cmake-version)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd cmake-$(cmake-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 
@@ -1186,7 +1189,7 @@ $(ibidir)/ghostscript-$(ghostscript-version): \
 #	'-DPNG_ARM_NEON_OPT=0' prevents an arm64 'neon' library from being
 #	required at compile time.
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd ghostscript-$(ghostscript-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	./configure --prefix=$(idir) \
@@ -1209,9 +1212,9 @@ $(ibidir)/ghostscript-$(ghostscript-version): \
 
 #	Install the fonts.
 	tar -xvf $(tdir)/ghostscript-fonts-std-$(ghostscript-fonts-std-version).tar.lz \
-	    -C $(idir)/share/ghostscript
+	    -C $(idir)/share/ghostscript --no-same-owner --no-same-permissions
 	tar -xvf $(tdir)/ghostscript-fonts-gnu-$(ghostscript-fonts-gnu-version).tar.lz \
-	    -C $(idir)/share/ghostscript
+	    -C $(idir)/share/ghostscript --no-same-owner --no-same-permissions
 	fc-cache -v $(idir)/share/ghostscript/fonts/
 	echo; echo "Ghostscript fonts added to Fontconfig."; echo;
 
@@ -1248,7 +1251,7 @@ $(ibidir)/icu-$(icu-version): $(ibidir)/python-$(python-version)
 	tarball=icu-$(icu-version).tar.lz
 	$(call import-source, $(icu-url), $(icu-checksum))
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	unpackdir=icu-$(icu-version)
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
@@ -1317,7 +1320,7 @@ $(ibidir)/imfit-$(imfit-version): \
 	cd $(ddir)
 	unpackdir=imfit-$(imfit-version)
 	rm -rf $$unpackdir
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	sed -i 's|/usr/local|$(idir)|g' SConstruct
@@ -1365,7 +1368,8 @@ $(ibidir)/minizip-$(minizip-version): $(ibidir)/automake-$(automake-version)
 	unpackdir=minizip-$(minizip-version)
 	rm -rf $$unpackdir
 	mkdir $$unpackdir
-	tar -xf $(tdir)/$$tarball -C$$unpackdir --strip-components=1
+	tar -xf $(tdir)/$$tarball -C$$unpackdir --strip-components=1 \
+	    --no-same-owner --no-same-permissions
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	./configure --prefix=$(idir)
@@ -1427,7 +1431,7 @@ $(ibidir)/netpbm-$(netpbm-version): \
 	cd $(ddir)
 	unpackdir=netpbm-$(netpbm-version)
 	rm -rf $$unpackdir
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
 
@@ -1547,7 +1551,7 @@ $(ibidir)/scons-$(scons-version): $(ibidir)/python-$(python-version)
 	cd $(ddir)
 	unpackdir=scons-$(scons-version)
 	rm -rf $$unpackdir
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
 
@@ -1593,7 +1597,7 @@ $(ibidir)/sextractor-$(sextractor-version): \
 	unpackdir=sextractor-$(sextractor-version)
 	cd $(ddir)
 	rm -rf $$unpackdir
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd $$unpackdir
 
 #	See comment above 'missfits' for '-fcommon'.
@@ -1694,7 +1698,7 @@ $(ibidir)/util-linux-$(util-linux-version): \
 #	explained above). As shown below, later, we'll put a symbolic link
 #	of all the necessary binaries in the main '$(idir)/bin'.
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd util-linux-$(util-linux-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 
@@ -1799,7 +1803,7 @@ $(ibidir)/vim-$(vim-version):
 	tarball=vim-$(vim-version).tar.lz
 	$(call import-source, $(vim-url), $(vim-checksum))
 	cd $(ddir)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	unpackdir=vim-$(vim-version)
 	cd $(ddir)/$$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
@@ -1869,7 +1873,8 @@ $(itidir)/texlive-ready-tlmgr: reproduce/software/config/texlive.conf
 	@topdir=$$(pwd)
 	cd $(ddir)
 	rm -rf install-tl-*
-	tar -xf $(tdir)/install-tl-unx.tar.gz
+	tar -xf $(tdir)/install-tl-unx.tar.gz \
+	    --no-same-owner --no-same-permissions
 	cd install-tl-*
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	sed -e's|@installdir[@]|$(idir)|g' \
@@ -1956,7 +1961,8 @@ $(itidir)/texlive-ready-tlmgr: reproduce/software/config/texlive.conf
                                  "$(backupservers)"; then
 	      cd $(ddir)
 	      rm -rf install-tl-*
-	      tar -xf $(tdir)/install-tl-unx.tar.gz
+	      tar -xf $(tdir)/install-tl-unx.tar.gz \
+	          --no-same-owner --no-same-permissions
 	      cd install-tl-*
 	      $(shsrcdir)/prep-source.sh $(ibdir)
 	      sed -e's|@installdir[@]|$(idir)|g' \

@@ -1273,32 +1273,9 @@ chmod +x $makewshell
 # Project's top-level built analysis directories
 # ----------------------------------------------
 
-# Top-level built analysis directories.
-badir="$bdir"/analysis
-if ! [ -d "$badir" ]; then mkdir "$badir"; fi
-
 # Top-level LaTeX.
-texdir="$badir"/tex
+texdir="$sdir"/tex
 if ! [ -d "$texdir" ]; then mkdir "$texdir"; fi
-
-# LaTeX macros.
-mtexdir="$texdir"/macros
-if ! [ -d "$mtexdir" ]; then mkdir "$mtexdir"; fi
-
-# TeX build directory. If built in a group scenario, the TeX build
-# directory must be separate for each member (so they can work on their
-# relevant parts of the paper without conflicting with each other).
-if [ "x$maneage_group_name" = x ]; then
-    texbdir="$texdir"/build
-else
-    user=$(whoami)
-    texbdir="$texdir"/build-$user
-fi
-if ! [ -d "$texbdir" ]; then mkdir "$texbdir"; fi
-
-# TiKZ (for building figures within LaTeX).
-tikzdir="$texbdir"/tikz
-if ! [ -d "$tikzdir" ]; then mkdir "$tikzdir"; fi
 
 # If 'tex/build' and 'tex/tikz' are symbolic links then 'rm -f' will delete
 # them and we can continue. However, when the project is being built from
@@ -1328,8 +1305,6 @@ rm -f .build .local
 
 ln -s "$bdir" .build
 ln -s "$instdir" .local
-ln -s "$texdir" tex/build
-ln -s "$tikzdir" tex/tikz
 
 # --------- Delete for no Gnuastro ---------
 rm -f .gnuastro
@@ -1875,7 +1850,7 @@ pymodules=$(prepare_name_version $verdir/python/*)
 texpkg=$(prepare_name_version $verdir/tex/texlive)
 
 # Acknowledge these software packages in a LaTeX paragraph.
-pkgver=$mtexdir/dependencies.tex
+pkgver=$texdir/dependencies.tex
 
 # Add the text to the ${pkgver} file.
 .local/bin/echo "$thank_software_introduce " > $pkgver
@@ -1892,7 +1867,7 @@ bibfiles="$ictdir/*"
 for f in $bibfiles; do if [ -f $f ]; then hasentry=1; break; fi; done;
 
 # Make sure we start with an empty output file.
-pkgbib=$mtexdir/dependencies-bib.tex
+pkgbib=$texdir/dependencies-bib.tex
 echo "" > $pkgbib
 
 # Fill it in with all the BibTeX entries in this directory. We'll just
@@ -1912,7 +1887,7 @@ fi
 # ---------------------------
 #
 # Report hardware
-hwparam="$mtexdir/hardware-parameters.tex"
+hwparam="$texdir/hardware-parameters.tex"
 
 # Add the text to the ${hwparam} file. Since harware class might include
 # underscore, it must be replaced with '\_', otherwise pdftex would

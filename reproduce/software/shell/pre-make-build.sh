@@ -177,7 +177,7 @@ build_program() {
     fi
 
     # Unpack the tarball and go into it.
-    tar xf "$intar"
+    tar xf "$intar" --no-same-owner --no-same-permissions
     if [ x$intarrm = x1 ]; then rm "$intar"; fi
     cd "$unpackdir"
 

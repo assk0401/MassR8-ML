@@ -144,10 +144,17 @@ backupservers_all = $(user_backup_urls) $(maneage_backup_urls)
 topbackupserver = $(word 1, $(backupservers_all))
 backupservers = $(filter-out $(topbackupserver),$(backupservers_all))
 
-
-
-
-
+# When building in Apptainer containers, as of 2025-04-18, we need to
+# configure Maneage as root (within the container). In such cases, we need
+# to activate the 'FORCE_UNSAFE_CONFIGURE' environment variable to build
+# some of the software. The 'if' statement is here to make sure we are in
+# Apptainer: in other situations, the "unsafe" configure script shouldn't
+# be activated. Note that this doesn't happen in Docker (where the Maneage
+# source is in the same directory) because we build a non-root ('maneager'
+# user there who executes the configure command.
+unsafe-config = if [    $$(pwd) = "/home/maneager/source" ] \
+                   && [ $$(whoami) = root ]; then \
+                 export FORCE_UNSAFE_CONFIGURE=1; fi
 
 
 
@@ -261,11 +268,8 @@ $(ibidir)/low-level-links: $(ibidir)/grep-$(grep-version) \
 #
 # The first set of programs to be built are those that we need to unpack
 # the source code tarballs of each program. We have already installed Lzip
-# before calling 'basic.mk', so it is present and working. Hence we first
-# build the Lzipped tarball of Gzip, then use our own Gzip to unpack the
-# tarballs of the other compression programs. Once all the compression
-# programs/libraries are complete, we build our own GNU Tar and continue
-# with other software.
+# before calling 'basic.mk', so it is present and working. So the only
+# prerequisites of these (until reaching Tar) is the necessary directories.
 $(lockdir): | $(BDIR); mkdir $@
 $(ibidir)/gzip-$(gzip-version): | $(ibdir) $(ildir) $(lockdir)
 	tarball=gzip-$(gzip-version).tar.lz
@@ -273,13 +277,13 @@ $(ibidir)/gzip-$(gzip-version): | $(ibdir) $(ildir) $(lockdir)
 	$(call gbuild, gzip-$(gzip-version), static, , V=1)
 	echo "GNU Gzip $(gzip-version)" > $@
 
-$(ibidir)/xz-$(xz-version): $(ibidir)/gzip-$(gzip-version)
+$(ibidir)/xz-$(xz-version): | $(ibdir) $(ildir) $(lockdir)
 	tarball=xz-$(xz-version).tar.lz
 	$(call import-source, $(xz-url), $(xz-checksum))
 	$(call gbuild, xz-$(xz-version), static)
 	echo "XZ Utils $(xz-version)" > $@
 
-$(ibidir)/bzip2-$(bzip2-version): $(ibidir)/gzip-$(gzip-version)
+$(ibidir)/bzip2-$(bzip2-version): | $(ibdir) $(ildir) $(lockdir)
 
 #	Download the tarball.
 	tarball=bzip2-$(bzip2-version).tar.lz
@@ -308,7 +312,7 @@ $(ibidir)/bzip2-$(bzip2-version): $(ibidir)/gzip-$(gzip-version)
 	fi
 	cd $(ddir)
 	rm -rf $$tdir
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd $$tdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	sed -e 's@\(ln -s -f \)$$(PREFIX)/bin/@\1@' Makefile \
@@ -330,7 +334,7 @@ $(ibidir)/bzip2-$(bzip2-version): $(ibidir)/gzip-$(gzip-version)
 #
 # Note for a static-only build: Zlib's './configure' doesn't use Autoconf's
 # configure script, it just accepts a direct '--static' option.
-$(ibidir)/zlib-$(zlib-version): $(ibidir)/gzip-$(gzip-version)
+$(ibidir)/zlib-$(zlib-version): | $(ibdir) $(ildir) $(lockdir)
 	tarball=zlib-$(zlib-version).tar.lz
 	$(call import-source, $(zlib-url), $(zlib-checksum))
 	$(call gbuild, zlib-$(zlib-version))
@@ -351,6 +355,7 @@ $(ibidir)/tar-$(tar-version): \
 #	a bottleneck here: only making Tar. So its more efficient to built
 #	it on multiple threads (even when the user's Make doesn't pass down
 #	the number of threads).
+	$(call unsafe-config)
 	tarball=tar-$(tar-version).tar.lz
 	$(call import-source, $(tar-url), $(tar-checksum))
 	$(call gbuild, tar-$(tar-version), , , -j$(numthreads) V=1)
@@ -615,7 +620,7 @@ $(ibidir)/perl-$(perl-version): $(ibidir)/patchelf-$(patchelf-version)
 	                     | awk '{printf("%d.%d", $$1, $$2)}')
 	cd $(ddir)
 	rm -rf perl-$(perl-version)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd perl-$(perl-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	./Configure -des \
@@ -675,14 +680,15 @@ $(ibidir)/coreutils-$(coreutils-version): \
                     $(ibidir)/perl-$(perl-version) \
                     $(ibidir)/openssl-$(openssl-version)
 
-#	Import the source tarball.
+#	Import, unpack and enter the source directory.
+	$(call unsafe-config)
 	tarball=coreutils-$(coreutils-version).tar.lz
 	$(call import-source, $(coreutils-url), $(coreutils-checksum))
 
 #	Unpack and enter the source.
 	cd $(ddir)
 	rm -rf coreutils-$(coreutils-version)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd coreutils-$(coreutils-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 
@@ -696,7 +702,7 @@ $(ibidir)/coreutils-$(coreutils-version): \
 #	Fix RPATH if necessary.
 	if [ -f $(ibdir)/patchelf ]; then
 	  make SHELL=$(ibdir)/bash install DESTDIR=junkinst
-	  unalias ls || true # avoid decorated 'ls' commands with extra characters
+	  unalias ls || true # Not decorated 'ls' (with extra characters).
 	  instprogs=$$(ls junkinst/$(ibdir))
 	  for f in $$instprogs; do
 	    $(ibdir)/patchelf --set-rpath $(ildir) $(ibdir)/$$f
@@ -721,7 +727,7 @@ $(ibidir)/podlators-$(podlators-version): $(ibidir)/perl-$(perl-version)
 	$(call import-source, $(podlators-url), $(podlators-checksum))
 	cd $(ddir)
 	rm -rf podlators-$(podlators-version)
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd podlators-$(podlators-version)
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	perl Makefile.PL
@@ -1400,7 +1406,7 @@ $(ibidir)/gcc-$(gcc-version): $(ibidir)/binutils-$(binutils-version)
 #	  Unpack GCC and prepare the 'build' directory inside it for all
 #	  the built files.
 	  rm -rf gcc-$(gcc-version)
-	  tar -xf $(tdir)/$$tarball
+	  tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	  if [ $$odir != $(ddir) ]; then
 	    ln -s $$odir/gcc-$(gcc-version) $(ddir)/gcc-$(gcc-version)
 	  fi
@@ -1530,7 +1536,7 @@ $(ibidir)/lzip-$(lzip-version): $(ibidir)/gcc-$(gcc-version)
 	unpackdir=lzip-$(lzip-version)
 	cd $(ddir)
 	rm -rf $$unpackdir
-	tar -xf $(tdir)/$$tarball
+	tar -xf $(tdir)/$$tarball --no-same-owner --no-same-permissions
 	cd $$unpackdir
 	$(shsrcdir)/prep-source.sh $(ibdir)
 	./configure --build --check --installdir="$(ibdir)"

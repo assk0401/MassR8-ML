@@ -160,7 +160,7 @@ uncompress = csuffix=$$(echo $$utarball \
 	  intarrm=0; \
 	  intar=$$utarball; \
 	fi; \
-	if tar -xf $$intar; then \
+	if tar -xf $$intar --no-same-owner --no-same-permissions; then \
 	  if [ x$$intarrm = x1 ]; then rm $$intar; fi; \
 	else \
 	  echo; echo "Tar error"; exit 1; \

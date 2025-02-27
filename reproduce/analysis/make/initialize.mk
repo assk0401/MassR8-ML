@@ -41,7 +41,7 @@ bsdir=$(BDIR)/software
 # Derived directories (the locks directory can be shared with software
 # which already has this directory.).
 texdir      = $(badir)/tex
-lockdir     = $(bsdir)/locks
+lockdir     = $(badir)/.locks
 indir       = $(badir)/inputs
 prepdir     = $(badir)/prepare
 mtexdir     = $(texdir)/macros
@@ -73,7 +73,7 @@ pconfdir    = reproduce/analysis/config
 ifeq (x$(project-phase),xprepare)
 $(prepdir):; mkdir $@
 else
--include $(bsdir)/preparation-done.mk
+-include $(badir)/preparation-done.mk
 ifeq (x$(include-prepare-results),xyes)
 -include $(prepdir)/*.mk $(prepdir)/*.conf
 endif
@@ -274,7 +274,7 @@ clean:
 	rm -rf $(texdir)/macros/!(dependencies.tex|dependencies-bib.tex|hardware-parameters.tex)
 	rm -rf $(badir)/!(tex) $(texdir)/!(macros|$(texbtopdir))
 	rm -rf $(texdir)/build/!(tikz) $(texdir)/build/tikz/*
-	rm -rf $(bsdir)/preparation-done.mk
+	rm -rf $(badir)/preparation-done.mk
 
 distclean: clean
 #	Without cleaning the Git hooks, we won't be able to easily commit

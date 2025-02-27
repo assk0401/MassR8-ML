@@ -18,6 +18,7 @@
 
 
 
+
 # LaTeX macros for paper
 # ----------------------
 #
@@ -92,6 +93,40 @@ $(mtexdir)/project.tex: $(mtexdir)/verify.tex
 
 
 
+# TeX build directory
+# -------------------
+#
+# If built in a group scenario, the TeX build directory must be separate
+# for each member (so they can work on their relevant parts of the paper
+# without conflicting with each other).
+ifeq ($(strip $(maneage_group_name)),)
+texbdir:=$(texdir)/build
+else
+texbdir:=$(texdir)/build-$(shell whoami)
+endif
+tikzdir:=$(texbdir)/tikz
+$(texbdir):; mkdir $@
+$(tikzdir): | $(texbdir); mkdir $@
+
+
+
+
+
+# Software info in TeX
+# --------------------
+#
+# The information of the installed software is placed in the
+# '.build/software' directory (which the TeX build should not depend
+# on). Therefore, we should copy those macros here in the LaTeX build
+# directory, so the TeX directory is completely independent from each
+# other.
+$(mtexdir)/dependencies.tex: $(bsdir)/tex/dependencies.tex
+	cp $(bsdir)/tex/*.tex $(mtexdir)/
+
+
+
+
+
 # The bibliography
 # ----------------
 #
@@ -104,8 +139,9 @@ $(mtexdir)/project.tex: $(mtexdir)/verify.tex
 # recipe and the 'paper.pdf' recipe. But if 'tex/src/references.tex' hasn't
 # been modified, we don't want to re-build the bibliography, only the final
 # PDF.
-$(texbdir)/paper.bbl: tex/src/references.tex $(mtexdir)/dependencies-bib.tex \
-                      | $(mtexdir)/project.tex
+$(texbdir)/paper.bbl: tex/src/references.tex $(mtexdir)/dependencies.tex \
+                      | $(mtexdir)/project.tex $(tikzdir)
+
 #	If '$(mtexdir)/project.tex' is empty, don't build PDF.
 	@macros=$$(cat $(mtexdir)/project.tex)
 	if [ x"$$macros" != x ]; then
@@ -135,7 +171,6 @@ $(texbdir)/paper.bbl: tex/src/references.tex $(mtexdir)/dependencies-bib.tex \
 	  export LD_LIBRARY_PATH="$(sys_library_sh_path):$$LD_LIBRARY_PATH"
 	  pdflatex -shell-escape -halt-on-error "$$p"/paper.tex
 	  biber paper
-
 	fi
 
 
