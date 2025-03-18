@@ -527,13 +527,6 @@ $(ipydir)/future-$(future-version): \
 	$(call pybuild, tar -xf, future-$(future-version), , \
 	                Future $(future-version))
 
-$(ipydir)/cycler-$(cycler-version): $(ipydir)/six-$(six-version)
-	tarball=cycler-$(cycler-version).tar.lz
-	$(call import-source, $(cycler-url), $(cycler-checksum))
-	$(call pybuild, tar -xf, cycler-$(cycler-version), , \
-	                Cycler $(cycler-version), GPEP517)
-	echo "Cycler $(cycler-version)" > $@
-
 $(ipydir)/galsim-$(galsim-version): \
                  $(ipydir)/future-$(future-version) \
                  $(ipydir)/astropy-$(astropy-version) \
@@ -968,6 +961,15 @@ $(ipydir)/secretstorage-$(secretstorage-version): \
 	$(call pybuild, tar -xf, SecretStorage-$(secretstorage-version), , \
 	                SecretStorage $(secretstorage-version))
 
+$(ipydir)/semantic-version-$(semantic-version-version): \
+                           $(ipydir)/setuptools-$(setuptools-version)
+	tarball=semantic-version-$(semantic-version-version).tar.lz
+	$(call import-source, $(semantic-version-url), \
+	         $(semantic-version-checksum))
+	$(call pybuild, tar -xf, \
+	                semantic-version-$(semantic-version-version), , \
+	                Semantic-version $(semantic-version-version), GPEP517)
+
 $(ipydir)/setuptools-$(setuptools-version): \
                      $(ipydir)/gpep517-$(gpep517-version) \
                      $(ipydir)/python-installer-$(python-installer-version)
@@ -984,12 +986,13 @@ $(ipydir)/setuptools-scm-$(setuptools-scm-version): \
 	                Setuptools-scm $(setuptools-scm-version), GPEP517)
 
 $(ipydir)/setuptools-rust-$(setuptools-rust-version): \
-                          $(ipydir)/gpep517-$(gpep517-version) \
-                          $(ipydir)/python-installer-$(python-installer-version)
+                          $(ipydir)/setuptools-scm-$(setuptools-scm-version) \
+                          $(ipydir)/semantic-version-$(semantic-version-version)
 	tarball=setuptools-rust-$(setuptools-rust-version).tar.lz
-	$(call import-source, $(setuptools-rust-url), $(setuptools-rust-checksum))
+	$(call import-source, $(setuptools-rust-url), \
+	                      $(setuptools-rust-checksum))
 	$(call pybuild, tar -xf, setuptools-rust-$(setuptools-rust-version), , \
-	                Setuptools-scm $(setuptools-rust-version))
+	                Setuptools-rust $(setuptools-rust-version), GPEP517)
 
 $(ipydir)/sip_tpv-$(sip_tpv-version): \
                   $(ipydir)/sympy-$(sympy-version) \
