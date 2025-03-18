@@ -869,9 +869,24 @@ $(ipydir)/python-dateutil-$(python-dateutil-version): \
 	                python-dateutil $(python-dateutil-version), GPEP517)
 
 $(ipydir)/python-installer-$(python-installer-version): \
-                     $(ibidir)/python-$(python-version)
+                           $(ibidir)/python-$(python-version)
+
+#	Prepare the tarball.
 	tarball=python-installer-$(python-installer-version).tar.lz
 	$(call import-source, $(python-installer-url), $(python-installer-checksum))
+
+#	Modify the line in the source that will cause a crash when a
+#	to-be-installed file already exists in the installation path. This
+#	is very important for Python packages in Maneage (when a dependency
+#	is updated, the package needs to be re-built, but that would cause
+#	due to this line).
+	pyhook_before(){
+	  mv -v src/installer/destinations.py src/installer/destinations.py.orig; \
+	  sed -e 's/\(raise FileExistsError.message.\)/## \1/' \
+	     src/installer/destinations.py.orig > src/installer/destinations.py
+	}
+
+#	Build the Python installer.
 	$(call pybuild, tar -xf, \
 	                python-installer-$(python-installer-version),,, \
 	                BOOT_INSTALLER)
