@@ -35,17 +35,20 @@ software environment) to easily move it from one computer to another.
     systemctl start docker
     ```
 
- 2. Using your favorite text editor, create a `docker-local.sh` in your top
-    Maneage directory (as described in the comments at the start of the
-    `docker.sh` script in this directory). Just activate `--build-only` on
-    the first run so it doesn't go onto doing the analysis and just sets up
-    the software environment.
+ 2. Using your favorite text editor, create a `run.sh` in your top Maneage
+    directory (as described in the comments at the start of the `docker.sh`
+    script in this directory). Just activate `--build-only` on the first
+    run so it doesn't go onto doing the analysis and just sets up the
+    software environment. Set the respective directory(s) based on your
+    filesystem (the software directory is optional). The `run.sh` file name
+    is already in `.gitignore` (because it contains local directories), so
+    Git will ignore it and it won't be committed by mistake.
 
- 3. After the setup is complete, run the following command to confirm that
-    the `maneage-base` (the OS of the container) and `maneaged` (your
-    project's full Maneage'd environment) images are available. If you want
-    different names for these images, add the `--project-name` and
-    `--base-name` options to the `docker.sh` call.
+ 3. After the setup is complete, remove the `--build-only` and run the
+    command below to confirm that `maneage-base` (the OS of the container)
+    and `maneaged` (your project's full Maneage'd environment) images are
+    available. If you want different names for these images, add the
+    `--project-name` and `--base-name` options to the `docker.sh` call.
 
     ```shell
     docker image list
@@ -84,6 +87,24 @@ image into it.
 
 Below are some useful Docker usage scenarios that have proved to be
 relevant for us in Maneage'd projects.
+
+### Saving and loading an image as a file
+
+Docker keeps its images in hard to access (by humans) location on the
+operating system. Very much like Git, but with much less elegance: the
+place is shared by all users and projects of the system. So they are not
+easy to archive for usage on another system at a low-level. But it does
+have an interface (`docker save`) to copy all the relevant files within an
+image into a tar ball that you can archive externally. There is also a
+separate interface to load the tarball back into docker (`docker load`).
+
+Both of these have been implemented as the `--image-file` option of the
+`docker.sh` script. If you want to save your Maneage'd image into an image,
+simply give the tarball name to this option. Alternatively, if you already
+have a tarball and want to load it into Docker, give it to this option once
+(until you "clean up", as explained below). In fact, docker images take a
+lot of space and it is better to "clean up" regularly. And the only way you
+can clean up safely is through saving your needed images as a file.
 
 ### Cleaning up
 

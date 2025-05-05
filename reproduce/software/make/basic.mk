@@ -423,6 +423,7 @@ $(ibidir)/ncurses-$(ncurses-version): $(ibidir)/patchelf-$(patchelf-version)
 	rm -f $(ibdir)/bash* $(ibdir)/awk* $(ibdir)/gawk*
 
 #	Standard build process.
+	export CFLAGS="-std=c17 $$CFLAGS"
 	$(call gbuild, ncurses-$(ncurses-version), static, \
 	               --with-shared --enable-rpath --without-normal \
 	               --without-debug --with-cxx-binding \
@@ -561,7 +562,7 @@ $(ibidir)/bash-$(bash-version): \
 	if [ "x$(static_build)" = xyes ]; then stopt="--enable-static-link"
 	else                                   stopt=""
 	fi;
-	export CFLAGS="$$CFLAGS \
+	export CFLAGS="$$CFLAGS -std=c17 \
 	               -DDEFAULT_PATH_VALUE='\"$(ibdir)\"' \
 	               -DSTANDARD_UTILS_PATH='\"$(ibdir)\"'  \
 	               -DSYS_BASHRC='\"$(BASH_ENV)\"' "
@@ -1014,6 +1015,7 @@ $(ibidir)/gmp-$(gmp-version): \
               $(ibidir)/coreutils-$(coreutils-version)
 	tarball=gmp-$(gmp-version).tar.lz
 	$(call import-source, $(gmp-url), $(gmp-checksum))
+	export CFLAGS="-std=c17 $$CFLAGS"
 	$(call gbuild, gmp-$(gmp-version), static, \
 	               --enable-cxx --enable-fat, \
 	               -j$(numthreads))
@@ -1074,6 +1076,7 @@ $(ibidir)/grep-$(grep-version): $(ibidir)/coreutils-$(coreutils-version)
 $(ibidir)/m4-$(m4-version): $(ibidir)/patchelf-$(patchelf-version)
 	tarball=m4-$(m4-version).tar.lz
 	$(call import-source, $(m4-url), $(m4-checksum))
+	export CFLAGS="-std=c17 $$CFLAGS"
 	$(call gbuild, m4-$(m4-version), static, \
 	               --with-syscmd-shell=$(ibdir)/dash, \
 	               -j$(numthreads) V=1)
@@ -1106,6 +1109,7 @@ $(ibidir)/pkg-config-$(pkgconfig-version): $(ibidir)/patchelf-$(patchelf-version
 	if [ x$(on_mac_os) = xyes ]; then export compiler="CC=clang"
 	else                              export compiler=""
 	fi
+	export CFLAGS="-std=c17 $$CFLAGS"
 	$(call gbuild, pkg-config-$(pkgconfig-version), static, \
 	               $$compiler --with-internal-glib \
 	               --with-pc-path=$(ildir)/pkgconfig, V=1)

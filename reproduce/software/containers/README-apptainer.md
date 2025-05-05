@@ -22,24 +22,22 @@ analysis files (data and PDF) on your host operating system. This enables
 you to keep the size of the image to a minimum (only containing the built
 software environment) to easily move it from one computer to another.
 
- 1. Using your favorite text editor, create a `apptainer-local.sh` in your
-    project's top directory that contains the usage command shown at the
-    top of the 'apptainer.sh' script and take the following steps:
-    * Set the respective directories based on your own preferences.
-    * The `--software-dir` is optional (if you don't have the source
-      tarballs, Maneage will download them automatically. But that requires
-      internet (which may not always be available). If you regularly build
-      Maneage'd projects, you can clone the repository containing all the
-      tarballs at https://gitlab.cefca.es/maneage/tarballs-software
-    * Add an extra `--build-only` for the first run so it doesn't go onto
-      doing the analysis and just builds the image. After it has completed,
-      remove the `--build-only` and it will only run the analysis of your
-      project.
+ 1. Using your favorite text editor, create a `run.sh` in your top Maneage
+    directory (as described in the comments at the start of the
+    `apptainer.sh` script in this directory). Just add `--build-only` on
+    the first run so it doesn't go onto doing the analysis and just sets up
+    the software environment. Set the respective directory(s) based on your
+    filesystem (the software directory is optional). The `run.sh` file name
+    is already in `.gitignore` (because it contains local directories), so
+    Git will ignore it and it won't be committed by mistake.
 
- 2. Once step one finishes, the build directory will contain two
-    Singularity Image Format (SIF) files listed below. You can move them to
-    any other (more permanent) positions in your filesystem or to other
-    computers as needed.
+ 2. Make the script executable with `chmod +x ./run.sh`, and run it with
+    `./run.sh`.
+
+ 3. Once the build finishes, the build directory (on your host) will
+    contain two Singularity Image Format (SIF) files listed below. You can
+    move them to any other (more permanent) positions in your filesystem or
+    to other computers as needed.
     * `maneage-base.sif`: image containing the base operating system that
       was used to build your project. You can safely delete this unless you
       need to keep it for future builds without internet (you can give it
@@ -48,6 +46,10 @@ software environment) to easily move it from one computer to another.
     * `maneaged.sif`: image with the full software environment of your
       project. This file is necessary for future runs of your project
       within the container.
+
+ 3. To execute your project remote the `--build-only` and use `./run.sh` to
+    execute it. If you want to enter your Maneage'd project shell, add the
+    `--project-shell` option to the call inside `./run.sh`.
 
 
 
