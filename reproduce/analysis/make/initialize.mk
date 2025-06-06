@@ -265,16 +265,8 @@ clean:
 #	executing 'build'.
 	rm -f *.aux *.log *.synctex *.auxlock *.dvi *.out *.run.xml *.bcf
 
-#	Delete all the built outputs except the dependency programs. We'll
-#	use Bash's extended options builtin ('shopt') to enable "extended
-#	glob" (for listing of files). It allows extended features like
-#	ignoring the listing of a file with '!()' that we are using
-#	afterwards.
-	shopt -s extglob
-	rm -rf $(texdir)/macros/!(dependencies.tex|dependencies-bib.tex|hardware-parameters.tex)
-	rm -rf $(badir)/!(tex) $(texdir)/!(macros|$(texbtopdir))
-	rm -rf $(texdir)/build/!(tikz) $(texdir)/build/tikz/*
-	rm -rf $(badir)/preparation-done.mk
+#	Delete the full 'badir' (containing all analysis outputs).
+	rm -rf $(badir)
 
 distclean: clean
 #	Without cleaning the Git hooks, we won't be able to easily commit
