@@ -321,12 +321,11 @@ $(project-package-contents): paper.pdf | $(texdir)
 	    paper.tex > $$dir/paper.tex
 
 #	Copy ONLY the version-controlled files in 'reproduce' and
-#	'tex/src'. This is important because files like 'LOCAL.conf' (in
-#	'reproduce/software/config') should not be archived, they contain
-#	information about the host computer and are irrelevant for
-#	others. Also some project authors may have temporary files here
-#	that are not under version control and thus shouldn't be archived
-#	(although this is bad practice, but that is up to the user).
+#	'tex/src'. This is important because the git commit hash goes in
+#	the tarball name (should correspond to it) and some project authors
+#	may have temporary files here that are not under version control
+#	and thus shouldn't be archived (although this is bad practice, but
+#	that is up to the user).
 #
 #	To keep the sub-directory structure, we are packaging the files
 #	with Tar, piping it, and unpacking it in the archive directory. So
@@ -354,17 +353,20 @@ $(project-package-contents): paper.pdf | $(texdir)
 	rm -rf $$dir/tex/build/build*
 
 #	If the project has any PDFs in its 'tex/tikz' directory (TiKZ or
-#	PGFPlots was used to generate them), copy them too.
+#	PGFPlots was used to generate them), copy them too. Note that in
+#	the main project source, 'tex/tikz' is just a symbolic link to
+#	'tex/build/tikz'. But inside the tarball we do not want to have
+#	symbolic links and they should be independent.
 	if ls tex/tikz/*.pdf &> /dev/null; then
 	  cp tex/tikz/*.pdf $$dir/tex/tikz
 	fi
 
 #	When submitting to places like arXiv, they will just run LaTeX once
-#	and won't run 'biber'. So we need to also keep the '.bbl' file into
-#	the distributing tarball. However, BibLaTeX is particularly
-#	sensitive to versioning (a '.bbl' file has to be read by the same
-#	BibLaTeX version that created it). This is hard to do with
-#	non-up-to-date places like arXiv. Therefore, we thus just copy the
+#	and won't run 'biber' or 'biblatex'. So we need to also keep the
+#	'.bbl' file into the distributing tarball. However, BibLaTeX is
+#	particularly sensitive to versioning (a '.bbl' file has to be read
+#	by the same BibLaTeX version that created it). This is hard to do
+#	with non-up-to-date places like arXiv. Therefore, we just copy the
 #	whole of BibLaTeX's source (the version we are using) into the top
 #	tarball directory. In this way, arXiv's LaTeX engine will use the
 #	same BibLaTeX version to interpret the '.bbl' file. TIP: you can
