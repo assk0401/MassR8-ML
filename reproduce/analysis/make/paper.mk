@@ -164,9 +164,9 @@ $(texbdir)/paper.bbl: tex/src/references.tex $(mtexdir)/dependencies.tex \
 #	  for details.
 #
 #	  We need the modification to 'LD_LIBRARY_PATH' because we do not
-#	  build LaTeX from source and it uses '/bin/sh' (among other
-#	  possible system-wide things).
-	  export LD_LIBRARY_PATH="$(sys_library_sh_path):$$LD_LIBRARY_PATH"
+#	  build LaTeX from source and it (or its packages) may use
+#	  '/bin/sh' (among other possible system-wide things).
+	  export LD_LIBRARY_PATH="$(SYS_LIBRARY_SH_PATH):$$LD_LIBRARY_PATH"
 	  pdflatex -shell-escape -halt-on-error "$$p"/paper.tex
 	  biber paper
 	fi
@@ -198,9 +198,9 @@ paper.pdf: $(mtexdir)/project.tex paper.tex $(texbdir)/paper.bbl
 #	  option '-shell-escape'.
 #
 #	  We need the modification to 'LD_LIBRARY_PATH' because we do not
-#	  build LaTeX from source and it uses '/bin/sh' (among other
-#	  possible system-wide things).
-	  export LD_LIBRARY_PATH="$(sys_library_sh_path):$$LD_LIBRARY_PATH"
+#	  build LaTeX from source and it (or its packages) may use
+#	  '/bin/sh' (among other possible system-wide things).
+	  export LD_LIBRARY_PATH="$(SYS_LIBRARY_SH_PATH):$$LD_LIBRARY_PATH"
 	  pdflatex -shell-escape -halt-on-error "$$p"/paper.tex
 
 #	  Come back to the top project directory and copy the built PDF

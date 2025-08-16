@@ -31,8 +31,9 @@ DEPENDENCIES-DIR = @ddir@
 
 # Other local settings (compiler, downloader and user).
 SYS_CPATH  = @sys_cpath@
-DOWNLOADER = @downloader@
 GROUP-NAME = @groupname@
+DOWNLOADER = @downloader@
+SYS_LIBRARY_SH_PATH = @sys_library_sh_path@
 
 
 
