@@ -189,11 +189,11 @@ working examples.
    archived git history is available at
    [swh:1:dir:b3657cfb6053fd976695bd63c15cb99e5095648a](https://archive.softwareheritage.org/swh:1:dir:b3657cfb6053fd976695bd63c15cb99e5095648a;origin=https://gitlab.com/nasim-projects/pipeline;visit=swh:1:snp:ab7c6f0b9999f42d77154103c1bc082fa23b325c;anchor=swh:1:rev:afeb282c01983cba2a11eb4b2f25d5a40d35c164).
 
- - Eskandarlou et
-   al. [2024](https://ui.adsabs.harvard.edu/abs/2024RNAAS...8..168E),
-   Research Notes in American Astronomical Society (RNAAS), Volume 8, Issue
-   6, id.168. The project's version controlled source is on
-   [Codeberg](https://codeberg.org/gnuastro/papers) (the `radial-profile`
+ - Eskandarlou & Akhlaghi
+   [2024](https://ui.adsabs.harvard.edu/abs/2024RNAAS...8..168E), Research
+   Notes in American Astronomical Society (RNAAS), Volume 8, Issue 6,
+   id.168. The project's version controlled source is on
+   [Codeberg](https://codeberg.org/gnuastro/papers) (the `polar-plot`
    branch). Necessary software, outputs and backup of history are available
    at [zenodo.11403643](https://doi.org/10.5281/zenodo.11403643); and the
    archived git history is available at
@@ -209,10 +209,10 @@ working examples.
    archived git history is available at
    [swh:1:dir:d5029e066916cb64f0d95d20eb88294acc78b2b1](https://archive.softwareheritage.org/swh:1:dir:d5029e066916cb64f0d95d20eb88294acc78b2b1;origin=https://codeberg.org/gnuastro/papers;visit=swh:1:snp:b065324c2ef3b48bc26e8f30e48102a1abd2052f;anchor=swh:1:rev:61764447b16da44538e5ddbf7fb69937ba138e81).
 
- - Infante-Sainz et
-   al. [2024](https://ui.adsabs.harvard.edu/abs/2024RNAAS...8...10I),
-   Research Notes in American Astronomical Society (RNAAS), Volume 8, Issue
-   1, id.10. The project's version controlled source is on
+ - Infante-Sainz & Akhlaghi
+   [2024](https://ui.adsabs.harvard.edu/abs/2024RNAAS...8...10I), Research
+   Notes in American Astronomical Society (RNAAS), Volume 8, Issue 1,
+   id.10. The project's version controlled source is on
    [Codeberg](https://codeberg.org/gnuastro/papers) (the `color-faint-gray`
    branch). Necessary software, outputs and backup of history are available
    at [zenodo.10058165](https://doi.org/10.5281/zenodo.10058165); and the
