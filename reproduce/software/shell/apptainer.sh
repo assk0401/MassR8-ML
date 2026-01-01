@@ -41,8 +41,8 @@
 #
 # Known problems:
 #
-# Copyright (C) 2025-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
-# Copyright (C) 2025-2025 Giacomo Lorenzetti <glorenzetti@cefca.es>
+# Copyright (C) 2025-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2025-2026 Giacomo Lorenzetti <glorenzetti@cefca.es>
 #
 # This script is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the

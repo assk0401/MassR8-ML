@@ -1,8 +1,8 @@
 Maneage: managing data lineage
 ==============================
 
-Copyright (C) 2018-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>\
-Copyright (C) 2020-2025 Raul Infante-Sainz <infantesainz@gmail.com>\
+Copyright (C) 2018-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>\
+Copyright (C) 2020-2026 Raul Infante-Sainz <infantesainz@gmail.com>\
 See the end of the file for license conditions.
 
 Maneage is a **fully working template** for doing reproducible research (or
@@ -870,8 +870,8 @@ First custom commit
      and generally, all the files you modified in the previous step.
 
      ```
-     Copyright (C) 2018-2025 Existing Name <existing@email.address>
-     Copyright (C) 2025-2025 YOUR NAME <YOUR@EMAIL.ADDRESS>
+     Copyright (C) 2018-2026 Existing Name <existing@email.address>
+     Copyright (C) 2026-2026 YOUR NAME <YOUR@EMAIL.ADDRESS>
      ```
 
  10. **Configure Git for fist time**: If this is the first time you are

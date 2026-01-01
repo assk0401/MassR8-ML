@@ -31,7 +31,7 @@
 # reason, you don't want to use a lock file, set the 'lockfile' name to
 # 'nolock'.
 #
-# Copyright (C) 2019-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2019-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

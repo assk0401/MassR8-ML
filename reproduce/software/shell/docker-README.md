@@ -1,6 +1,6 @@
 # Maneage'd projects in Docker
 
-Copyright (C) 2021-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>\
+Copyright (C) 2021-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>\
 See the end of the file for license conditions.
 
 For an introduction on containers, see the "Building in containers" section

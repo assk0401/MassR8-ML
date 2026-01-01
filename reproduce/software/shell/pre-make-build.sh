@@ -2,7 +2,7 @@
 #
 # Very basic tools necessary to start Maneage's default building.
 #
-# Copyright (C) 2020-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2020-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This script is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

@@ -3,7 +3,7 @@
 # imported into 'basic.mk' and 'high-level.mk'. They should be activated
 # with Make's 'Call' function.
 #
-# Copyright (C) 2018-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2018-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This Makefile is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

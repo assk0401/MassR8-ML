@@ -15,9 +15,9 @@
 #
 # Discussion: https://savannah.nongnu.org/task/?15699
 #
-# Copyright (C) 2022-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
-# Copyright (C) 2022-2025 Pedram Ashofteh Ardakani <pedramardakani@pm.me>
-# Copyright (C) 2025-2025 Giacomo Lorenzetti <glorenzetti@cefca.es>
+# Copyright (C) 2022-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2022-2026 Pedram Ashofteh Ardakani <pedramardakani@pm.me>
+# Copyright (C) 2025-2026 Giacomo Lorenzetti <glorenzetti@cefca.es>
 #
 # This script is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the

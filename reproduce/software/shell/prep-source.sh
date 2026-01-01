@@ -7,7 +7,7 @@
 #        directory that it is run in ):
 #   ./prep-source.sh /FULL/ADDRESS/TO/DESIRED/BIN
 #
-# Copyright (C) 2024-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2024-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This script is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the

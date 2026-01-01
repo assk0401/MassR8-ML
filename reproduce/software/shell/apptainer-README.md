@@ -1,7 +1,7 @@
 # Maneage'd projects in Apptainer
 
-Copyright (C) 2025-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>\
-Copyright (C) 2025-2025 Giacomo Lorenzetti <glorenzetti@cefca.es>\
+Copyright (C) 2025-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>\
+Copyright (C) 2025-2026 Giacomo Lorenzetti <glorenzetti@cefca.es>\
 See the end of the file for license conditions.
 
 For an introduction on containers, see the "Building in containers" section

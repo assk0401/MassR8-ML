@@ -47,7 +47,7 @@
 #     clipped, log limit 2MiB reached]" message. We need to find a way to
 #     fix this (so nothing gets clipped: useful for debugging).
 #
-# Copyright (C) 2021-2025 Mohammad Akhlaghi <mohammad@akhlaghi.org>
+# Copyright (C) 2021-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>
 #
 # This script is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
