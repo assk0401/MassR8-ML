@@ -174,150 +174,157 @@ Published works using Maneage
 
 The list below shows some of the works that have already been published
 with (earlier versions of) Maneage, and some that have been recently
-submitted for peer review. The previous version of Maneage was called
-"Reproducible paper template", with a separate git tree. Maneage is
-evolving rapidly, so some details will differ between the different
-versions. The more recent papers will tend to be the most useful as good
-working examples.
+submitted for peer review. Maneage is evolving rapidly, so some details
+will differ between the different versions. The more recent papers will
+tend to be the most useful as good working examples if you are just
+starting.
 
+In the list below, by clicking on the paper's publication year, you will be
+taken to the paper's indexed page on the [SciX Digital
+Library](https://scixplorer.org) (successor to the [NASA
+ADS](https://ui.adsabs.harvard.edu)) which contains further bibliographic
+information like title, DOI and etc, in a unified format (independent of
+which journal the paper is published in).
  - Eskandarlou et
-   al. [2026](https://ui.adsabs.harvard.edu/abs/2025arXiv251012940E),
-   Astronomy and Astrophysics (A&A), accepted. The project's version
-   controlled source is on
+   al. ([2026](https://scixplorer.org/abs/2026A%26A...705A..67E), A&A,
+   Volume 705, id.A67, 14 pp;
+   arXiv:[2510.12940](https://arxiv.org/abs/2510.12940)). The project's
+   version controlled source is on
    [Gitlab](https://gitlab.com/Sepideh.Esk/psf-j-plus), necessary software,
    outputs and backup of history are available at
    [zenodo.17348653](http://doi.org/10.5281/zenodo.17348653); and the
    archived git history is available at
    [swh:1:dir:fc95ed9ad173de6fa64690e3d71ab041c630f32c](https://archive.softwareheritage.org/swh:1:dir:fc95ed9ad173de6fa64690e3d71ab041c630f32c;origin=https://gitlab.com/Sepideh.Esk/psf-j-plus;visit=swh:1:snp:31bb4550902f7902a0a65d0674106271de776d3e;anchor=swh:1:rev:4860c70d6285a60300e429889e8637e98568a915).
-
- - Saremi et
-   al. [2025](https://ui.adsabs.harvard.edu/abs/2025A%26A...701A.116S),
-   Astronomy and Astrophysics (A&A), Volume 701, id.A116. The project's
+ - Saremi et al. ([2025](https://scixplorer.org/abs/2025A%26A...701A.116S),
+   A&A, Volume 701, id.A116, 18 pp.;
+   arXiv:[2508.02780](https://arxiv.org/abs/2508.02780)). The project's
    version controlled source is on
    [Gitlab](https://gitlab.com/nasim-projects/pipeline), necessary
    software, outputs and backup of history are available at
    [zenodo.16152699](https://doi.org/10.5281/zenodo.16152699); and the
    archived git history is available at
    [swh:1:dir:b3657cfb6053fd976695bd63c15cb99e5095648a](https://archive.softwareheritage.org/swh:1:dir:b3657cfb6053fd976695bd63c15cb99e5095648a;origin=https://gitlab.com/nasim-projects/pipeline;visit=swh:1:snp:ab7c6f0b9999f42d77154103c1bc082fa23b325c;anchor=swh:1:rev:afeb282c01983cba2a11eb4b2f25d5a40d35c164).
-
  - Eskandarlou & Akhlaghi
-   [2024](https://ui.adsabs.harvard.edu/abs/2024RNAAS...8..168E), Research
-   Notes in American Astronomical Society (RNAAS), Volume 8, Issue 6,
-   id.168. The project's version controlled source is on
+   ([2024](https://scixplorer.org/abs/2024RNAAS...8..168E), RNAAS, Volume
+   8, Issue 6, id.168;
+   arXiv:[2406.14619](https://arxiv.org/abs/2406.14619)). The project's
+   version controlled source is on
    [Codeberg](https://codeberg.org/gnuastro/papers) (the `polar-plot`
    branch). Necessary software, outputs and backup of history are available
    at [zenodo.11403643](https://doi.org/10.5281/zenodo.11403643); and the
    archived git history is available at
    [swh:1:dir:4e09bf85f9f87336fa55920bf67e7bcf6d58bbd5](https://archive.softwareheritage.org/swh:1:dir:4e09bf85f9f87336fa55920bf67e7bcf6d58bbd5;origin=https://codeberg.org/gnuastro/papers;visit=swh:1:snp:557ee1a90de465659659ecc46df0c5ce29d0bb61;anchor=swh:1:rev:375e12e52080006be6a28e10980e79ef54d13d1d).
-
  - Infante-Sainz et
-   al. [2024](https://ui.adsabs.harvard.edu/abs/2024RNAAS...8...22I),
-   Research Notes in American Astronomical Society (RNAAS), Volume 8, Issue
-   1, id.22. The project's version controlled source is on
+   al. ([2024](https://scixplorer.org/abs/2024RNAAS...8...22I), RNAAS,
+   Volume 8, Issue 1, id.22;
+   arXiv:[2401.05303](https://arxiv.org/abs/2401.05303)). The project's
+   version controlled source is on
    [Codeberg](https://codeberg.org/gnuastro/papers) (the `radial-profile`
    branch). Necessary software, outputs and backup of history are available
    at [zenodo.10124582](https://doi.org/10.5281/zenodo.10124582); and the
    archived git history is available at
    [swh:1:dir:d5029e066916cb64f0d95d20eb88294acc78b2b1](https://archive.softwareheritage.org/swh:1:dir:d5029e066916cb64f0d95d20eb88294acc78b2b1;origin=https://codeberg.org/gnuastro/papers;visit=swh:1:snp:b065324c2ef3b48bc26e8f30e48102a1abd2052f;anchor=swh:1:rev:61764447b16da44538e5ddbf7fb69937ba138e81).
-
  - Infante-Sainz & Akhlaghi
-   [2024](https://ui.adsabs.harvard.edu/abs/2024RNAAS...8...10I), Research
-   Notes in American Astronomical Society (RNAAS), Volume 8, Issue 1,
-   id.10. The project's version controlled source is on
+   ([2024](https://scixplorer.org/abs/2024RNAAS...8...10I), RNAAS, Volume
+   8, Issue 1, id.10;
+   arXiv:[2401.03814](https://arxiv.org/abs/2401.03814)). The project's
+   version controlled source is on
    [Codeberg](https://codeberg.org/gnuastro/papers) (the `color-faint-gray`
    branch). Necessary software, outputs and backup of history are available
    at [zenodo.10058165](https://doi.org/10.5281/zenodo.10058165); and the
    archived git history is available at
    [swh:1:dir:1064a48d4bb58d6684c3df33c6633a04d4141d2d](https://archive.softwareheritage.org/swh:1:dir:1064a48d4bb58d6684c3df33c6633a04d4141d2d;origin=https://codeberg.org/gnuastro/papers;visit=swh:1:snp:a083ff647c571f895d1ccc9f7432fa1b9a1d03a8;anchor=swh:1:rev:ff77b619daa50b05ddd83206d979d1f8a53d040b).
-
  - Eskandarlou et
-   al. [2023](https://ui.adsabs.harvard.edu/abs/2023RNAAS...7..269E),
-   Research Notes in American Astronomical Society (RNAAS), Volume 7, Issue
-   12, id.269. The project's version controlled source is on
+   al. ([2023](https://scixplorer.org/abs/2023RNAAS...7..269E), RNAAS,
+   Volume 7, Issue 12, id.269;
+   arXiv:[2312.04263](https://arxiv.org/abs/2312.04263)). The project's
+   version controlled source is on
    [Codeberg](https://codeberg.org/gnuastro/papers) (the `zeropoint`
    branch). Necessary software, outputs and backup of history are available
    at [zenodo.10256845](https://doi.org/10.5281/zenodo.10256845); and the
    archived git history is available at
    [swh:1:dir:8b2d1f63be96de3de03aa3e2bb68fa7fa52df56f](https://archive.softwareheritage.org/swh:1:dir:8b2d1f63be96de3de03aa3e2bb68fa7fa52df56f;origin=https://codeberg.org/gnuastro/papers;visit=swh:1:snp:e37e226bab517eef24d854467682b2fcf5d7dc32;anchor=swh:1:rev:ea682783d83707c0e1d114a5de74a100be9f545d).
-
- - Akhlaghi [2023](https://ui.adsabs.harvard.edu/abs/2023RNAAS...7..211A),
-   Research Notes in American Astronomical Society (RNAAS), Volume 7, Issue
-   10, id.211. The project's version controlled source is on
+ - Akhlaghi ([2023](https://scixplorer.org/abs/2023RNAAS...7..211A), RNAAS), Volume 7, Issue
+   10, id.211; arXiv:[2310.15006](https://arxiv.org/abs/2310.15006)). The
+   project's version controlled source is on
    [Codeberg](https://codeberg.org/gnuastro/papers) (the
    `pointing-simulate` branch).
-
  - Borkowska & Roukema
-   ([2022](https://ui.adsabs.harvard.edu/abs/2022CQGra..39u5007B),
-   Classical and Quantum Gravity, arXiv:2112.14174): The live version of
-   the controlled source is [at
+   ([2022](https://scixplorer.org/abs/2022CQGra..39u5007B), Classical and
+   Quantum Gravity, Volume 39, Issue 21, id.215007, 29 pp;
+   arXiv:[2112.14174](https://arxiv.org/abs/2112.14174)): The live version
+   of the controlled source is [at
    Codeberg](https://codeberg.org/boud/gevcurvtest); the main input
    dataset, a software snapshot, the software tarballs, the project outputs
    and editing history are available at
    [zenodo.5806027](https://doi.org/10.5281/zenodo.5806027); and the
    archived git history is available at
    [swh:1:rev:54398b720ddbac269ede30bf1e27fe27f07567f7](https://archive.softwareheritage.org/browse/revision/54398b720ddbac269ede30bf1e27fe27f07567f7).
-
- - Peper & Roukema
-   ([2021](https://ui.adsabs.harvard.edu/abs/2021MNRAS.505.1223P), MNRAS,
-   505, 1223, DOI:10.1093/mnras/stab1342, arXiv:2010.03742): The live
-   version of the controlled source is [at
+ - Peper & Roukema ([2021](https://scixplorer.org/abs/2021MNRAS.505.1223P),
+   MNRAS, 505, 1223; arXiv:[2010.03742](https://arxiv.org/abs/2010.03742)):
+   The live version of the controlled source is [at
    Codeberg](https://codeberg.org/boud/elaphrocentre); the main input
    dataset, a software snapshot, the software tarballs, the project outputs
    and editing history are available at
    [zenodo.4699702](https://zenodo.org/record/4699702); and the archived
    git history is available at
    [swh:1:rev:a029edd32d5cd41dbdac145189d9b1a08421114e](https://archive.softwareheritage.org/swh:1:rev:a029edd32d5cd41dbdac145189d9b1a08421114e).
-
- - Roukema ([2021](https://ui.adsabs.harvard.edu/abs/2021PeerJ...911856R),
-   PeerJ, 9:e11856, arXiv:2007.11779): The live version of the controlled
-   source is [at Codeberg](https://codeberg.org/boud/subpoisson); the main
-   input dataset, a software snapshot, the software tarballs, the project
-   outputs and editing history are available at
+ - Roukema ([2021](https://scixplorer.org/abs/2021PeerJ...911856R), PeerJ,
+   Vol. 9, article id. e11856;
+   arXiv:[2007.11779](https://arxiv.org/abs/2007.11779)): The live version
+   of the controlled source is [at
+   Codeberg](https://codeberg.org/boud/subpoisson); the main input dataset,
+   a software snapshot, the software tarballs, the project outputs and
+   editing history are available at
    [zenodo.4765705](https://zenodo.org/record/4765705); and the archived
    git history is available at
    [swh:1:rev:72242ca8eade9659031ea00394a30e0cc5cc1c37](https://archive.softwareheritage.org/swh:1:rev:72242ca8eade9659031ea00394a30e0cc5cc1c37).
-
- - Akhlaghi et
-   al. ([2021](https://ui.adsabs.harvard.edu/abs/2021CSE....23c..82A),
-   CiSE, 23(3), 82 DOI:10.1109/MCSE.2021.3072860 arXiv:2006.03018): The
-   project's version controlled source is [on
+ - Akhlaghi et al. ([2021](https://scixplorer.org/abs/2021CSE....23c..82A),
+   CiSE, 23(3), 82; arXiv:[2006.03018](https://arxiv.org/abs/2006.03018)):
+   The project's version controlled source is [on
    Gitlab](https://gitlab.com/makhlaghi/maneage-paper), necessary software,
    outputs and backup of history are available at
    [zenodo.3872248](https://doi.org/10.5281/zenodo.3872248); and the
    archived git history is available at
    [swh:1:dir:45a9e282a86145fe9babef529c8fce52ffe8d717](https://archive.softwareheritage.org/swh:1:dir:45a9e282a86145fe9babef529c8fce52ffe8d717).
-
  - Infante-Sainz et
-   al. ([2020](https://ui.adsabs.harvard.edu/abs/2020MNRAS.491.5317I),
-   MNRAS, 491, 5317): The version controlled project source is available
-   [on GitLab](https://gitlab.com/infantesainz/sdss-extended-psfs-paper)
-   and is also archived on Zenodo with all the necessary software tarballs:
+   al. ([2020](https://scixplorer.org/abs/2020MNRAS.491.5317I), MNRAS, 491,
+   5317; arXiv:[1911.01430](https://arxiv.org/abs/1911.01430)): The version
+   controlled project source is available [on
+   GitLab](https://gitlab.com/infantesainz/sdss-extended-psfs-paper) and is
+   also archived on Zenodo with all the necessary software tarballs:
    [zenodo.3524937](https://zenodo.org/record/3524937).
-
- - Akhlaghi ([2019](https://arxiv.org/abs/1909.11230), IAU Symposium
-   355). The version controlled project source is available
-   [on GitLab](https://gitlab.com/makhlaghi/iau-symposium-355) and is also
+ - Akhlaghi ([2019](https://scixplorer.org/abs/2019arXiv190911230A), IAU
+   Symposium 355;
+   arXiv:[1909.11230](https://arxiv.org/abs/1909.11230)). The version
+   controlled project source is available [on
+   GitLab](https://gitlab.com/makhlaghi/iau-symposium-355) and is also
    archived on Zenodo with all the necessary software tarballs:
    [zenodo.3408481](https://doi.org/10.5281/zenodo.3408481).
 
+The items below were the precursors to Maneage. In other words, the work to
+have reproducible results in the items below lead to what is now
+Maneage. They are therefore much less complete than what Maneage is today,
+but are important from a historical perspective.
  - Section 7.3 of Bacon et
-   al. ([2017](http://adsabs.harvard.edu/abs/2017A%26A...608A...1B), A&A
-   608, A1): The version controlled project source is available [on
+   al. ([2017](https://scixplorer.org/abs/2017A%26A...608A...1B), A&A 608,
+   A1; arXiv:[1710.03002](https://arxiv.org/abs/1710.03002)): The version
+   controlled project source is available [on
    GitLab](https://gitlab.com/makhlaghi/muse-udf-origin-only-hst-magnitudes)
    and a snapshot of the project along with all the necessary input
    datasets and outputs is available in
    [zenodo.1164774](https://doi.org/10.5281/zenodo.1164774).
-
  - Section 4 of Bacon et
-   al. ([2017](http://adsabs.harvard.edu/abs/2017A%26A...608A...1B), A&A,
-   608, A1): The version controlled project is available [on
+   al. ([2017](https://scixplorer.org/abs/2017A%26A...608A...1B), A&A, 608,
+   A1; arXiv:[1710.03002](https://arxiv.org/abs/1710.03002)): The version
+   controlled project is available [on
    GitLab](https://gitlab.com/makhlaghi/muse-udf-photometry-astrometry) and
    a snapshot of the project along with all the necessary input datasets is
    available in [zenodo.1163746](https://doi.org/10.5281/zenodo.1163746).
-
  - Akhlaghi & Ichikawa
-   ([2015](http://adsabs.harvard.edu/abs/2015ApJS..220....1A), ApJS, 220,
-   1): The version controlled project is available [on
+   ([2015](https://scixplorer.org/abs/2015ApJS..220....1A), ApJS, 220, 1;
+   arXiv:[1505.01664](https://arxiv.org/abs/1505.01664)): The version
+   controlled project is available [on
    GitLab](https://gitlab.com/makhlaghi/NoiseChisel-paper). This is the
    very first (and much less mature!) incarnation of Maneage: the history
    of Maneage started more than two years after this paper was
