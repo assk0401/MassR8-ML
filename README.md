@@ -1,4 +1,4 @@
-Reproducible source for XXXXXXXXXXXXXXXXX
+Reproducible source for Alexander Stolzenbach's Thesis
 -------------------------------------------------------------------------
 
 Copyright (C) 2018-2026 Mohammad Akhlaghi <mohammad@akhlaghi.org>\
